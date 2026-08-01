@@ -1597,31 +1597,70 @@ if (nicheGrid) {
   if (!('DeviceOrientationEvent' in window)) return;
 
   let baseline = null;
-  let velocity = 0;
+  let neutralScroll = null;
+  let targetOffset = 0;
+  let toBottom = false;
+  let touchActive = false;
+  const GAIN = 34;
+  const MAX_TILT = 85;
 
   function onOrient(e) {
+    if (touchActive) return;
     const b = e.beta;
-    if (b == null) { baseline = null; return; }
-    if (baseline === null) { baseline = b; return; }
+    if (b == null) { baseline = null; neutralScroll = null; return; }
+    if (b < -120) {
+      if (!toBottom) {
+        toBottom = true;
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+      }
+      targetOffset = 0;
+      baseline = null;
+      neutralScroll = null;
+      return;
+    }
+    toBottom = false;
+    if (baseline === null) {
+      baseline = b;
+      neutralScroll = window.scrollY;
+      return;
+    }
     const delta = b - baseline;
-    const dead = 4;
-    const ramp = 14;
-    let target;
-    if (delta > dead) target = -Math.min((delta - dead) / ramp, 2.5);
-    else if (delta < -dead) target = Math.min((-delta - dead) / ramp, 2.5);
-    else target = 0;
-    velocity += (target - velocity) * (target === 0 ? 0.3 : 0.22);
-    baseline += (b - baseline) * 0.004;
+    if (Math.abs(delta) < 3) {
+      baseline += delta * 0.1;
+      neutralScroll += (window.scrollY - neutralScroll) * 0.1;
+      targetOffset = 0;
+    } else {
+      targetOffset = Math.max(-MAX_TILT, Math.min(MAX_TILT, delta)) * GAIN;
+    }
   }
 
   function loop() {
-    const step = velocity * 18;
-    if (Math.abs(step) > 0.5) window.scrollBy({ top: step, behavior: 'auto' });
+    if (!touchActive) {
+      let cur = window.scrollY;
+      if (neutralScroll === null) neutralScroll = cur;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const desired = Math.max(0, Math.min(max, neutralScroll - targetOffset));
+      if (Math.abs(desired - cur) > 0.5) {
+        window.scrollTo(0, cur + (desired - cur) * 0.3);
+      }
+    }
     requestAnimationFrame(loop);
   }
 
   const start = () => {
     window.addEventListener('deviceorientation', onOrient, { passive: true });
+    window.addEventListener('touchstart', () => {
+      touchActive = true;
+      baseline = null;
+      neutralScroll = null;
+      targetOffset = 0;
+    }, { passive: true });
+    window.addEventListener('touchend', () => {
+      touchActive = false;
+      baseline = null;
+      neutralScroll = null;
+      targetOffset = 0;
+    }, { passive: true });
     requestAnimationFrame(loop);
   };
 
