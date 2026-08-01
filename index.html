@@ -777,6 +777,11 @@ img{ max-width: 100%; display: block; }
   #tiltHint{ display:none; }
 }
 
+/* Water layer — whole page drifts with tilt */
+#water{
+  will-change: transform;
+}
+
 /* Logo pop bubble — "hey you choose the right one" */
 .logo-pop{
   position:fixed; z-index:1300;
@@ -976,6 +981,8 @@ body.preload-done .hero-actions{
 
 <div id="welcomeToast" role="status" aria-live="polite">Hi, thank you for choosing us</div>
 <div id="tiltHint">Tilt down your phone for auto scroll</div>
+
+<div id="water">
 
 <header class="nav" id="top">
   <a class="logo" href="#top" aria-label="Cinevoz home">
@@ -1208,6 +1215,8 @@ body.preload-done .hero-actions{
     <a href="#contact">Contact</a>
   </div>
 </footer>
+
+</div>
 
 <script>
 document.documentElement.classList.add('js');
@@ -1622,8 +1631,12 @@ if (nicheGrid) {
   let toBottom = false;
   let savedScroll = null;
   let touchActive = false;
+  let waterOffset = 0;
   const GAIN = 110;
   const MAX_TILT = 85;
+  const waterEl = document.getElementById('water');
+  const DRIFT_MAX = 48;
+  const DRIFT_GAIN = 1.2;
 
   function onOrient(e) {
     if (touchActive) return;
@@ -1667,6 +1680,7 @@ if (nicheGrid) {
 
   let lastFrame = null;
   function loop(timestamp) {
+    const dt = lastFrame === null ? 16.67 : Math.min(timestamp - lastFrame, 50);
     if (!touchActive) {
       const cur = window.scrollY;
       if (neutralScroll === null) neutralScroll = cur;
@@ -1674,10 +1688,18 @@ if (nicheGrid) {
       const desired = Math.max(0, Math.min(max, neutralScroll - targetOffset));
       const diff = desired - cur;
       if (Math.abs(diff) > 0.5) {
-        const dt = lastFrame === null ? 16.67 : Math.min(timestamp - lastFrame, 50);
         const ease = 0.18;
         const k = 1 - Math.pow(1 - ease, dt / 16.67);
         window.scrollTo(0, cur + diff * k);
+      }
+      if (waterEl) {
+        const rawDrift = -Math.max(-MAX_TILT, Math.min(MAX_TILT, targetOffset / GAIN)) * DRIFT_GAIN;
+        let drift = Math.max(-DRIFT_MAX, Math.min(DRIFT_MAX, rawDrift));
+        if (drift > 0) drift = Math.min(drift, cur);
+        else drift = Math.max(drift, -(max - cur));
+        const wk = 1 - Math.pow(1 - 0.25, dt / 16.67);
+        waterOffset += (drift - waterOffset) * wk;
+        waterEl.style.transform = 'translate3d(0, ' + waterOffset.toFixed(1) + 'px, 0)';
       }
     }
     lastFrame = timestamp;
@@ -1691,6 +1713,8 @@ if (nicheGrid) {
       baseline = null;
       neutralScroll = null;
       targetOffset = 0;
+      waterOffset = 0;
+      if (waterEl) waterEl.style.transform = '';
     }, { passive: true });
     window.addEventListener('touchend', () => {
       touchActive = false;
