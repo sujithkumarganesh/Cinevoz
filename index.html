@@ -175,11 +175,26 @@ img{ max-width: 100%; display: block; }
   padding: 130px 5vw 100px;
   text-align: center;
 }
+.hero-gif{
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: url('cinevoz-loader-1920x1080.gif') center / cover no-repeat;
+  opacity: 0;
+  transform: scale(1.06);
+  transition: opacity 450ms var(--ease-expo), transform 650ms var(--ease-expo);
+  pointer-events: none;
+}
+.hero:has(.hl-wrap:hover) .hero-gif{
+  opacity: 1;
+  transform: scale(1);
+}
 .hero-vignette{
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.05), transparent 60%),
-              radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.55), transparent 70%);
+  background: linear-gradient(rgba(6,30,22,0.4), rgba(6,30,22,0.62)),
+              radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.05), transparent 60%),
+              radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.5), transparent 70%);
   pointer-events: none;
 }
 .eyebrow{
@@ -211,6 +226,11 @@ img{ max-width: 100%; display: block; }
   font-weight: 700;
   color: var(--gold-light);
 }
+.hl-wrap{
+  position: relative;
+  display: inline-block;
+}
+.hl-wrap .hl{ position: relative; z-index: 1; }
 .hero-underline{
   display: block;
   width: min(72%, 330px);
@@ -847,10 +867,11 @@ body.preload-done .hero-actions{
 
   <!-- HERO -->
   <section class="hero">
+    <div class="hero-gif" aria-hidden="true"></div>
     <div class="hero-vignette" aria-hidden="true"></div>
     <h1 class="hero-title">
       <span class="line">From your first video</span>
-      <span class="line"><em class="hl">to your first 100k.</em>
+      <span class="line"><span class="hl-wrap"><em class="hl">to your first 100k.</em></span>
         <svg class="hero-underline" viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true">
           <path d="M14 15 C 62 6, 116 19, 150 11 S 246 5, 286 14" fill="none" stroke-width="2.6" stroke-linecap="round"/>
         </svg>
