@@ -29,6 +29,7 @@
   --radius-sm: 8px;
   --container: 1180px;
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-oily: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 *, *::before, *::after{ box-sizing: border-box; }
@@ -36,7 +37,7 @@ html{ scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce){
   html{ scroll-behavior: auto; }
   *{ animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
-  .js .reveal{ opacity: 1 !important; transform: none !important; }
+  .js .reveal{ opacity: 1 !important; transform: none !important; filter: none !important; }
   #preloader{ display:none !important; }
   .nav, .hero-vignette, .hero .eyebrow, .hero-title .line, .hero-underline, .hero-underline path, .hero-sub, .hero-actions{ animation-play-state: running !important; }
 }
@@ -130,7 +131,7 @@ img{ max-width: 100%; display: block; }
 .nav-links a{
   text-decoration: none;
   color: var(--ivory-dim);
-  transition: color 180ms var(--ease-expo);
+  transition: color 300ms var(--ease-oily);
 }
 .nav-links a:hover{ color: var(--gold-light); }
 .nav-cta{ font-size: 13px; padding: 9px 18px; }
@@ -151,7 +152,7 @@ img{ max-width: 100%; display: block; }
   text-decoration: none;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: transform 180ms var(--ease-expo), background 180ms var(--ease-expo), color 180ms var(--ease-expo), border-color 180ms var(--ease-expo);
+  transition: transform 320ms var(--ease-oily), background 320ms var(--ease-oily), color 320ms var(--ease-oily), border-color 320ms var(--ease-oily);
 }
 .btn:hover{ transform: translateY(-2px); }
 .btn:active{ transform: scale(0.98); }
@@ -181,13 +182,16 @@ img{ max-width: 100%; display: block; }
   z-index: 0;
   background: url('cinevoz-loader-1920x1080.gif') center / cover no-repeat;
   opacity: 0;
-  transform: scale(1.06);
-  transition: opacity 450ms var(--ease-expo), transform 650ms var(--ease-expo);
+  transform: scale(1.1);
+  filter: blur(8px) saturate(1.15);
+  transition: opacity 850ms var(--ease-expo), transform 1400ms var(--ease-expo), filter 850ms var(--ease-expo);
+  will-change: opacity, transform, filter;
   pointer-events: none;
 }
 .hero:has(.hl-wrap:hover) .hero-gif{
   opacity: 1;
   transform: scale(1);
+  filter: blur(0) saturate(1);
 }
 .hero-vignette{
   position: absolute;
@@ -209,10 +213,11 @@ img{ max-width: 100%; display: block; }
 .eyebrow-light{ color: var(--gold-light); }
 .hero-title{
   position: relative;
-  font-size: clamp(38px, 6vw, 68px);
-  line-height: 1;
+  font-size: clamp(28px, 7.5vw, 68px);
+  line-height: 1.05;
   margin: 0 0 22px;
   font-weight: 600;
+  text-wrap: balance;
 }
 .hero-sub{
   position: relative;
@@ -256,21 +261,21 @@ img{ max-width: 100%; display: block; }
 }
 
 /* ---------- Load sequence ---------- */
-.hero-vignette{ animation: fadeIn 700ms var(--ease-expo) both; }
-.hero .eyebrow{ animation: riseIn 600ms var(--ease-expo) both; animation-delay: 120ms; }
-.hero-title .line{ display: block; animation: riseIn 650ms var(--ease-expo) both; }
+.hero-vignette{ animation: fadeIn 900ms var(--ease-oily) both; }
+.hero .eyebrow{ animation: riseIn 850ms var(--ease-oily) both; animation-delay: 120ms; }
+.hero-title .line{ display: block; animation: riseIn 900ms var(--ease-oily) both; }
 .hero-title .line:nth-of-type(1){ animation-delay: 250ms; }
-.hero-title .line:nth-of-type(2){ animation-delay: 320ms; }
-.hero-sub{ animation: riseIn 650ms var(--ease-expo) both; animation-delay: 450ms; }
-.hero-actions{ animation: riseIn 650ms var(--ease-expo) both; animation-delay: 580ms; }
+.hero-title .line:nth-of-type(2){ animation-delay: 340ms; }
+.hero-sub{ animation: riseIn 900ms var(--ease-oily) both; animation-delay: 480ms; }
+.hero-actions{ animation: riseIn 900ms var(--ease-oily) both; animation-delay: 620ms; }
 
 @keyframes fadeIn{
   from{ opacity: 0; }
   to{ opacity: 1; }
 }
 @keyframes riseIn{
-  from{ opacity: 0; transform: translateY(22px); }
-  to{ opacity: 1; transform: none; }
+  from{ opacity: 0; transform: translateY(34px); filter: blur(4px); }
+  to{ opacity: 1; transform: none; filter: blur(0); }
 }
 @keyframes handDraw{
   from{ stroke-dashoffset: 1; }
@@ -357,11 +362,11 @@ img{ max-width: 100%; display: block; }
   color: var(--ivory);
   border-radius: var(--radius);
   padding: 32px 28px;
-  transition: transform 240ms var(--ease-expo), box-shadow 240ms var(--ease-expo);
+  transition: transform 450ms var(--ease-oily), box-shadow 450ms var(--ease-oily);
 }
 .card:hover{
-  transform: translateY(-4px);
-  box-shadow: 0 18px 40px rgba(20,18,13,0.18);
+  transform: translateY(-6px);
+  box-shadow: 0 22px 50px rgba(20,18,13,0.2);
 }
 .card-mark{
   width: 44px; height: 44px;
@@ -437,10 +442,10 @@ img{ max-width: 100%; display: block; }
   font-size: 14px;
   padding: 10px 16px;
   outline: none;
-  transition: border-color 240ms var(--ease-expo);
+  transition: border-color 350ms var(--ease-oily), box-shadow 350ms var(--ease-oily);
 }
 #nicheSearch::placeholder{ color: rgba(247,244,236,0.4); }
-#nicheSearch:focus{ border-color: var(--gold-light); }
+#nicheSearch:focus{ border-color: var(--gold-light); box-shadow: 0 0 0 3px rgba(196,155,74,0.18); }
 .quiz-count{
   font-size: 13px;
   letter-spacing: 0.08em;
@@ -464,9 +469,9 @@ img{ max-width: 100%; display: block; }
   padding: 8px 15px;
   border-radius: 999px;
   cursor: pointer;
-  transition: border-color 240ms var(--ease-expo), background 240ms var(--ease-expo), color 240ms var(--ease-expo), transform 240ms var(--ease-expo);
+  transition: border-color 350ms var(--ease-oily), background 350ms var(--ease-oily), color 350ms var(--ease-oily), transform 350ms var(--ease-oily);
 }
-.niche-chip:hover{ border-color: var(--gold-light); transform: translateY(-1px); }
+.niche-chip:hover{ border-color: var(--gold-light); transform: translateY(-2px); }
 .niche-chip.selected{
   background: var(--gold-light);
   border-color: var(--gold-light);
@@ -593,12 +598,14 @@ img{ max-width: 100%; display: block; }
 /* ---------- Scroll reveals ---------- */
 .js .reveal{
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 700ms var(--ease-expo), transform 700ms var(--ease-expo);
+  transform: translateY(30px);
+  filter: blur(5px);
+  transition: opacity 1000ms var(--ease-oily), transform 1000ms var(--ease-oily), filter 1000ms var(--ease-oily);
 }
 .js .reveal.is-visible{
   opacity: 1;
   transform: none;
+  filter: blur(0);
 }
 
 /* ---------- Footer ---------- */
@@ -661,7 +668,7 @@ img{ max-width: 100%; display: block; }
   position:absolute; inset:0;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   text-align:center; opacity:0; pointer-events:none;
-  transition: opacity 450ms var(--ease-expo);
+  transition: opacity 700ms var(--ease-oily);
 }
 .scene.active{ opacity:1; }
 #preloader .eyebrow{
@@ -731,9 +738,45 @@ img{ max-width: 100%; display: block; }
 @keyframes plFadeIn{ to{ opacity:1; } }
 #preloader.exit{
   transform: translateY(-100%);
-  transition: transform 900ms var(--ease-expo);
+  transition: transform 900ms var(--ease-oily);
 }
 #preloader.hide{ display:none; }
+
+/* O-reel wheels sweep right-to-left during the exit wipe */
+.pl-wheel{
+  position:absolute; top:50%; right:0; z-index:0;
+  width:200px; height:200px;
+  opacity:0; pointer-events:none;
+  transform: translate(115vw,-50%);
+}
+.pl-wheel.sm{ width:120px; height:120px; top:34%; }
+.pl-wheel.sm2{ width:84px; height:84px; top:66%; }
+.pl-wheel-core{
+  position:relative; width:100%; height:100%; border-radius:50%;
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255,255,255,0.5), rgba(255,255,255,0) 35%),
+    radial-gradient(circle at 50% 50%, var(--ink) 0 20%, transparent 21%),
+    conic-gradient(from 0deg, var(--gold-light), var(--gold), var(--gold-dark), var(--gold), var(--gold-light));
+  animation: reelSpin 2.6s linear infinite;
+  box-shadow: 0 20px 45px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(0,0,0,0.25);
+}
+.pl-wheel-core::before{
+  content:""; position:absolute; inset:0; border-radius:50%;
+  background:
+    radial-gradient(circle at 50% 18%, var(--ink) 0 9%, transparent 10%),
+    radial-gradient(circle at 82% 34%, var(--ink) 0 9%, transparent 10%),
+    radial-gradient(circle at 82% 66%, var(--ink) 0 9%, transparent 10%),
+    radial-gradient(circle at 50% 82%, var(--ink) 0 9%, transparent 10%),
+    radial-gradient(circle at 18% 66%, var(--ink) 0 9%, transparent 10%),
+    radial-gradient(circle at 18% 34%, var(--ink) 0 9%, transparent 10%);
+}
+#preloader.exit .pl-wheel{
+  opacity:1;
+  transform: translate(-130vw,-50%);
+  transition: transform 950ms var(--ease-oily), opacity 250ms var(--ease-oily) 60ms;
+}
+#preloader.exit .pl-wheel.sm{ transition-delay: 90ms, 60ms; }
+#preloader.exit .pl-wheel.sm2{ transition-delay: 170ms, 60ms; }
 
 /* ---------- Load gate (hero sequence plays after preloader) ---------- */
 .nav,
@@ -782,6 +825,11 @@ body.preload-done .hero-actions{
   .services-grid, .team-grid{ grid-template-columns: 1fr; }
   .hero{ padding: 96px 6vw 72px; }
   .nav-cta{ display: none; }
+  .hero-title{
+    font-size: clamp(30px, 8.2vw, 44px);
+    line-height: 1.08;
+  }
+  .hero-underline{ width: min(68%, 300px); }
 }
 </style>
 </head>
@@ -789,6 +837,10 @@ body.preload-done .hero-actions{
 
 <div id="preloader">
   <div class="grain"></div>
+
+  <div class="pl-wheel" aria-hidden="true"><span class="pl-wheel-core"></span></div>
+  <div class="pl-wheel sm" aria-hidden="true"><span class="pl-wheel-core"></span></div>
+  <div class="pl-wheel sm2" aria-hidden="true"><span class="pl-wheel-core"></span></div>
 
   <div class="pl-logo"><span class="logo-word">CINEV</span><span class="reel" aria-hidden="true"></span><span class="logo-word">Z</span></div>
 
