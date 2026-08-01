@@ -402,6 +402,73 @@ img{ max-width: 100%; display: block; }
 }
 .step p{ margin: 0; font-size: 14.5px; color: rgba(247,244,236,0.75); }
 
+/* ---------- Shake / fun section ---------- */
+.shake-section{ text-align: center; }
+.shake-section .section-title{ margin-left: auto; margin-right: auto; }
+.shake-lede{
+  max-width: 460px;
+  margin: 0 auto 48px;
+  color: var(--ink-soft);
+  font-size: 16px;
+}
+.shake-stage{
+  position: relative;
+  max-width: 460px;
+  margin: 0 auto;
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.shake-phone{
+  position: relative;
+  width: 92px; height: 170px;
+  border: 3px solid var(--ink);
+  border-radius: 22px;
+  background: linear-gradient(160deg, var(--emerald), var(--emerald-deep));
+  box-shadow: 0 18px 40px rgba(20,18,13,0.25);
+  animation: phoneShake 2.2s ease-in-out infinite;
+}
+.shake-screen{
+  position: absolute;
+  inset: 10px;
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(247,214,130,0.9) 0 7%, transparent 8%),
+    repeating-linear-gradient(90deg, transparent 0 6px, rgba(247,244,236,0.18) 6px 8px);
+}
+.shake-phone::before, .shake-phone::after{
+  content: "";
+  position: absolute; left: 50%; transform: translateX(-50%);
+}
+.shake-phone::before{ top: 6px; width: 26px; height: 4px; border-radius: 3px; background: rgba(247,244,236,0.6); }
+.shake-phone::after{ bottom: 6px; width: 34px; height: 4px; border-radius: 3px; background: rgba(247,244,236,0.45); }
+@keyframes phoneShake{
+  0%, 100%{ transform: rotate(0deg) translateY(0); }
+  10%{ transform: rotate(-8deg) translateY(-6px); }
+  20%{ transform: rotate(8deg) translateY(2px); }
+  30%{ transform: rotate(-6deg) translateY(-4px); }
+  40%{ transform: rotate(6deg) translateY(2px); }
+  50%{ transform: rotate(0deg) translateY(0); }
+  70%{ transform: rotate(0deg) translateY(0); }
+}
+.shake-message{
+  margin: 34px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 4vw, 30px);
+  font-weight: 600;
+  color: var(--emerald);
+  opacity: 0;
+  transform: translateY(14px) scale(0.96);
+  transition: opacity 500ms var(--ease-oily), transform 500ms var(--ease-oily);
+}
+.shake-message.show{
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.shake-heart{ color: var(--gold); }
+
 /* ---------- Niche quiz ---------- */
 .niche-quiz{
   max-width: var(--container);
@@ -1174,6 +1241,17 @@ body.preload-done .hero-actions{
     </div>
   </section>
 
+  <!-- SHAKE / FUN -->
+  <section class="section shake-section" id="shake">
+    <p class="eyebrow reveal">Try this</p>
+    <h2 class="section-title reveal">Shake your phone.</h2>
+    <p class="shake-lede reveal">Give it a little shake — we've got something to tell you.</p>
+    <div class="shake-stage reveal">
+      <div class="shake-phone" aria-hidden="true"><span class="shake-screen"></span></div>
+      <p class="shake-message" id="cuteMessage" role="status" aria-live="polite">You're looking very cute <span class="shake-heart">♥</span></p>
+    </div>
+  </section>
+
   <!-- CONTACT / CTA -->
   <section class="section section-dark cta-section" id="contact">
     <p class="eyebrow eyebrow-light reveal">Ready when you are</p>
@@ -1679,6 +1757,17 @@ if (nicheGrid) {
   }
 
   let lastFrame = null;
+  let lastShake = 0;
+  let cuteTimer = null;
+
+  function showCute() {
+    const msg = document.getElementById('cuteMessage');
+    if (!msg) return;
+    clearTimeout(cuteTimer);
+    cuteTimer = setTimeout(() => msg.classList.add('show'), 3000);
+    setTimeout(() => msg.classList.remove('show'), 10000);
+  }
+
   function loop(timestamp) {
     const dt = lastFrame === null ? 16.67 : Math.min(timestamp - lastFrame, 50);
     if (!touchActive) {
@@ -1706,8 +1795,25 @@ if (nicheGrid) {
     requestAnimationFrame(loop);
   }
 
+  function onMotion(e) {
+    const acc = e.accelerationIncludingGravity;
+    if (!acc) return;
+    const x = acc.x || 0;
+    const y = acc.y || 0;
+    const z = acc.z || 0;
+    const magnitude = Math.sqrt(x * x + y * y + z * z);
+    const now = performance.now();
+    if (magnitude > 24 && now - lastShake > 1200) {
+      lastShake = now;
+      snapFlash();
+      showCute();
+      try { if (navigator.vibrate) navigator.vibrate(80); } catch (err) {}
+    }
+  }
+
   const start = () => {
     window.addEventListener('deviceorientation', onOrient, { passive: true });
+    window.addEventListener('devicemotion', onMotion, { passive: true });
     window.addEventListener('touchstart', () => {
       touchActive = true;
       baseline = null;
@@ -1733,8 +1839,14 @@ if (nicheGrid) {
 
   if (typeof DeviceOrientationEvent.requestPermission === 'function') {
     const requestPermission = () => {
-      DeviceOrientationEvent.requestPermission()
-        .then((res) => { if (res === 'granted') start(); })
+      const p1 = typeof DeviceOrientationEvent.requestPermission === 'function'
+        ? DeviceOrientationEvent.requestPermission()
+        : Promise.resolve('granted');
+      const p2 = typeof DeviceMotionEvent.requestPermission === 'function'
+        ? DeviceMotionEvent.requestPermission()
+        : Promise.resolve('granted');
+      Promise.all([p1, p2])
+        .then((res) => { if (res[0] === 'granted' || res[1] === 'granted') start(); })
         .catch(() => {});
     };
     document.addEventListener('pointerdown', requestPermission, { once: true });
