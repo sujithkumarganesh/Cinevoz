@@ -1600,8 +1600,9 @@ if (nicheGrid) {
   let neutralScroll = null;
   let targetOffset = 0;
   let toBottom = false;
+  let savedScroll = null;
   let touchActive = false;
-  const GAIN = 34;
+  const GAIN = 110;
   const MAX_TILT = 85;
 
   function onOrient(e) {
@@ -1611,6 +1612,7 @@ if (nicheGrid) {
     if (b < -120) {
       if (!toBottom) {
         toBottom = true;
+        savedScroll = window.scrollY;
         window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
       }
       targetOffset = 0;
@@ -1618,7 +1620,16 @@ if (nicheGrid) {
       neutralScroll = null;
       return;
     }
-    toBottom = false;
+    if (toBottom) {
+      toBottom = false;
+      targetOffset = 0;
+      baseline = null;
+      if (savedScroll !== null) {
+        neutralScroll = savedScroll;
+        savedScroll = null;
+      }
+      return;
+    }
     if (baseline === null) {
       baseline = b;
       neutralScroll = window.scrollY;
@@ -1634,16 +1645,22 @@ if (nicheGrid) {
     }
   }
 
-  function loop() {
+  let lastFrame = null;
+  function loop(timestamp) {
     if (!touchActive) {
-      let cur = window.scrollY;
+      const cur = window.scrollY;
       if (neutralScroll === null) neutralScroll = cur;
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const desired = Math.max(0, Math.min(max, neutralScroll - targetOffset));
-      if (Math.abs(desired - cur) > 0.5) {
-        window.scrollTo(0, cur + (desired - cur) * 0.3);
+      const diff = desired - cur;
+      if (Math.abs(diff) > 0.5) {
+        const dt = lastFrame === null ? 16.67 : Math.min(timestamp - lastFrame, 50);
+        const ease = 0.18;
+        const k = 1 - Math.pow(1 - ease, dt / 16.67);
+        window.scrollTo(0, cur + diff * k);
       }
     }
+    lastFrame = timestamp;
     requestAnimationFrame(loop);
   }
 
