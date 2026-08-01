@@ -1604,18 +1604,18 @@ if (nicheGrid) {
     if (b == null) { baseline = null; return; }
     if (baseline === null) { baseline = b; return; }
     const delta = b - baseline;
-    const dead = 6;
-    const ramp = 18;
+    const dead = 4;
+    const ramp = 14;
     let target;
-    if (delta > dead) target = -Math.min((delta - dead) / ramp, 1.4);
-    else if (delta < -dead) target = Math.min((-delta - dead) / ramp, 1.4);
+    if (delta > dead) target = -Math.min((delta - dead) / ramp, 2.5);
+    else if (delta < -dead) target = Math.min((-delta - dead) / ramp, 2.5);
     else target = 0;
-    velocity += (target - velocity) * 0.18;
+    velocity += (target - velocity) * (target === 0 ? 0.3 : 0.22);
     baseline += (b - baseline) * 0.004;
   }
 
   function loop() {
-    const step = velocity * 10;
+    const step = velocity * 18;
     if (Math.abs(step) > 0.5) window.scrollBy({ top: step, behavior: 'auto' });
     requestAnimationFrame(loop);
   }
