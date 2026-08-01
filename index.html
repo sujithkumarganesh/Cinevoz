@@ -758,6 +758,25 @@ img{ max-width: 100%; display: block; }
 }
 #welcomeToast.show{ opacity:1; transform:translate(-50%, 0); }
 
+/* Tilt hint — mobile only */
+#tiltHint{
+  position:fixed; left:50%; bottom:26px; z-index:1190;
+  transform:translate(-50%, 18px);
+  background:rgba(20,18,13,0.88);
+  border:1px solid rgba(196,155,74,0.35);
+  color:var(--gold-light);
+  padding:11px 20px;
+  border-radius:999px;
+  font-size:0.88rem; letter-spacing:0.03em; white-space:nowrap;
+  box-shadow:0 12px 28px rgba(0,0,0,0.32);
+  opacity:0; pointer-events:none;
+  transition:opacity 600ms var(--ease-oily), transform 600ms var(--ease-oily);
+}
+#tiltHint.show{ opacity:1; transform:translate(-50%, 0); }
+@media (min-width: 769px){
+  #tiltHint{ display:none; }
+}
+
 /* Logo pop bubble — "hey you choose the right one" */
 .logo-pop{
   position:fixed; z-index:1300;
@@ -956,6 +975,7 @@ body.preload-done .hero-actions{
 </div>
 
 <div id="welcomeToast" role="status" aria-live="polite">Hi, thank you for choosing us</div>
+<div id="tiltHint">Tilt down your phone for auto scroll</div>
 
 <header class="nav" id="top">
   <a class="logo" href="#top" aria-label="Cinevoz home">
@@ -1678,6 +1698,12 @@ if (nicheGrid) {
       neutralScroll = null;
       targetOffset = 0;
     }, { passive: true });
+    const hint = document.getElementById('tiltHint');
+    if (hint) {
+      setTimeout(() => hint.classList.add('show'), 1500);
+      setTimeout(() => hint.classList.remove('show'), 7000);
+      window.addEventListener('touchstart', () => hint.classList.remove('show'), { once: true });
+    }
     requestAnimationFrame(loop);
   };
 
