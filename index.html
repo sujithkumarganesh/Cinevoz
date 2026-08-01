@@ -778,6 +778,26 @@ img{ max-width: 100%; display: block; }
   border:7px solid transparent; border-bottom-color:var(--gold);
 }
 
+/* Celebration canvas — 5s confetti on double-tap */
+#celebrate{
+  position:fixed; inset:0; z-index:1400;
+  pointer-events:none;
+}
+
+/* Camera selfie flash overlay */
+#snapFlash{
+  position:fixed; inset:0; z-index:1450;
+  background:#fff; pointer-events:none;
+  opacity:0;
+}
+#snapFlash.go{
+  animation: snapFlashAnim 320ms ease-out;
+}
+@keyframes snapFlashAnim{
+  0%{ opacity:0.95; }
+  100%{ opacity:0; }
+}
+
 /* O-reel wheels sweep right-to-left during the exit wipe */
 .pl-wheel{
   position:absolute; top:50%; right:0; z-index:0;
@@ -1313,6 +1333,64 @@ logoEls.forEach((logo) => {
   });
 });
 
+// Double-tap / double-click celebration — 5 seconds of confetti
+function runCelebration() {
+  const canvas = document.createElement('canvas');
+  canvas.id = 'celebrate';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  const colors = ['#C49B4A', '#F7D682', '#8A6A28', '#F7F4EC', '#14120D'];
+  const COUNT = 180;
+  const DURATION = 5000;
+  const parts = [];
+  for (let i = 0; i < COUNT; i++) {
+    parts.push({
+      x: Math.random() * canvas.width,
+      y: -20 - Math.random() * canvas.height,
+      w: 6 + Math.random() * 8,
+      h: 10 + Math.random() * 12,
+      vx: (Math.random() - 0.5) * 3,
+      vy: 2 + Math.random() * 4,
+      rot: Math.random() * Math.PI,
+      vr: (Math.random() - 0.5) * 0.2,
+      color: colors[(Math.random() * colors.length) | 0]
+    });
+  }
+  const start = performance.now();
+  function frame(now) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    parts.forEach((p) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    if (now - start < DURATION) requestAnimationFrame(frame);
+    else canvas.remove();
+  }
+  requestAnimationFrame(frame);
+}
+
+let lastLogoTap = 0;
+logoEls.forEach((logo) => {
+  logo.addEventListener('pointerup', () => {
+    const now = Date.now();
+    if (now - lastLogoTap < 350) {
+      lastLogoTap = 0;
+      runCelebration();
+    } else {
+      lastLogoTap = now;
+    }
+  });
+});
+
 // Scroll reveals — fade and rise as sections enter the viewport
 const revealEls = document.querySelectorAll('.reveal');
 
@@ -1337,6 +1415,48 @@ if ('IntersectionObserver' in window) {
   revealEls.forEach((el) => el.classList.add('is-visible'));
 }
 
+// Camera selfie shutter — sound + white flash
+let snapCtx = null;
+function snapFlash() {
+  try {
+    if (!snapCtx) snapCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = snapCtx;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(1900, now);
+    gain.gain.setValueAtTime(0.1, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.06);
+    const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.15), ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2);
+    const src = ctx.createBufferSource();
+    const nGain = ctx.createGain();
+    nGain.gain.value = 0.22;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 3000;
+    src.buffer = buffer;
+    src.connect(filter).connect(nGain).connect(ctx.destination);
+    src.start(now + 0.02);
+    ctx.resume();
+  } catch (e) {}
+  let flash = document.getElementById('snapFlash');
+  if (!flash) {
+    flash = document.createElement('div');
+    flash.id = 'snapFlash';
+    document.body.appendChild(flash);
+  }
+  flash.classList.remove('go');
+  void flash.offsetWidth;
+  flash.classList.add('go');
+  setTimeout(() => flash.classList.remove('go'), 350);
+}
+
 // Contact form (demo — replace with a real endpoint)
 const form = document.getElementById('contactForm');
 const status = document.getElementById('formStatus');
@@ -1344,6 +1464,7 @@ const status = document.getElementById('formStatus');
 if (form) {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
+    snapFlash();
     status.textContent = "Thanks — we'll be in touch within one business day.";
     form.reset();
   });
@@ -1427,7 +1548,7 @@ if (nicheGrid) {
       btn.addEventListener('click', () => {
         if (selected.has(niche)) selected.delete(niche);
         else if (selected.size >= MAX_PICKS) return;
-        else selected.add(niche);
+        else { selected.add(niche); snapFlash(); }
         render();
         updateCount();
       });
@@ -1455,6 +1576,7 @@ if (nicheGrid) {
   if (quizCta) {
     quizCta.addEventListener('click', () => {
       if (selected.size === 0) return;
+      snapFlash();
       const list = Array.from(selected).join(', ');
       if (messageField) {
         messageField.value = 'Niche picks: ' + list;
@@ -1467,6 +1589,53 @@ if (nicheGrid) {
   render();
   updateCount();
 }
+
+// Tilt-to-scroll — smooth, mobile only
+(function () {
+  const isMobile = window.matchMedia('(max-width: 768px) and (pointer: coarse)').matches;
+  if (!isMobile) return;
+  if (!('DeviceOrientationEvent' in window)) return;
+
+  let baseline = null;
+  let velocity = 0;
+
+  function onOrient(e) {
+    const b = e.beta;
+    if (b == null) { baseline = null; return; }
+    if (baseline === null) { baseline = b; return; }
+    const delta = b - baseline;
+    const dead = 6;
+    const ramp = 18;
+    let target;
+    if (delta > dead) target = -Math.min((delta - dead) / ramp, 1.4);
+    else if (delta < -dead) target = Math.min((-delta - dead) / ramp, 1.4);
+    else target = 0;
+    velocity += (target - velocity) * 0.18;
+    baseline += (b - baseline) * 0.004;
+  }
+
+  function loop() {
+    const step = velocity * 10;
+    if (Math.abs(step) > 0.5) window.scrollBy({ top: step, behavior: 'auto' });
+    requestAnimationFrame(loop);
+  }
+
+  const start = () => {
+    window.addEventListener('deviceorientation', onOrient, { passive: true });
+    requestAnimationFrame(loop);
+  };
+
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    const requestPermission = () => {
+      DeviceOrientationEvent.requestPermission()
+        .then((res) => { if (res === 'granted') start(); })
+        .catch(() => {});
+    };
+    document.addEventListener('pointerdown', requestPermission, { once: true });
+  } else {
+    start();
+  }
+})();
 </script>
 </body>
 </html>
