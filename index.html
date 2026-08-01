@@ -1029,7 +1029,7 @@ body.preload-done .hero-actions{
       <p class="quiz-question">Find your lane — pick the niches that feel like you.</p>
       <p class="quiz-hint">Search all 100, then choose up to 10. It's the first 5 minutes of our strategy call.</p>
       <div class="quiz-bar">
-        <input id="nicheSearch" type="search" placeholder="Search 100 niches…" autocomplete="off" />
+        <input id="nicheSearch" type="search" placeholder="Search 199 niches…" autocomplete="off" />
         <p class="quiz-count"><b id="nicheCount">0</b> / 10 selected</p>
       </div>
       <div class="niche-grid" id="nicheGrid" role="group" aria-label="Pick your niches"></div>
@@ -1136,14 +1136,22 @@ document.documentElement.classList.add('js');
 
 // Narrative preloader — four scenes, then curtain-wipe into the hero
 (function () {
+  const buzz = () => {
+    if (navigator.vibrate) {
+      try { navigator.vibrate([50, 40, 90]); } catch (e) {}
+    }
+  };
+
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.body.classList.add('preload-done');
+    buzz();
     return;
   }
 
   const preloader = document.getElementById('preloader');
   if (!preloader) {
     document.body.classList.add('preload-done');
+    buzz();
     return;
   }
 
@@ -1198,6 +1206,7 @@ document.documentElement.classList.add('js');
     document.body.classList.add('preload-done');
     preloader.classList.add('exit');
     document.body.style.overflow = '';
+    buzz();
     setTimeout(() => {
       preloader.classList.add('hide');
       preloader.remove();
@@ -1260,28 +1269,48 @@ if (form) {
   });
 }
 
-// Niche quiz — pick from 100 niches, up to 10
+// Niche quiz — pick from 199 niches, up to 10
 const NICHES = [
-  'Fitness','Nutrition & Diet','Weight Loss','Muscle Building','Yoga & Mobility',
-  'Running & Marathon','Sports Highlights','Personal Finance','Investing','Crypto',
-  'Side Hustles','Productivity & Habits','Self Improvement','Motivation & Mindset',
-  'Psychology','Mental Health','Meditation & Mindfulness','Cooking','Baking','Street Food',
-  'Restaurant Reviews','Food Science','Fashion','Streetwear','Thrifting',
-  'Beauty & Makeup','Skincare','Hair','Nails & Manicure','Grooming',
-  'Gaming','Esports','Game Development','Mobile Games','Streaming / IRL',
-  'Tech Reviews','Gadgets & Unboxings','AI & Machine Learning','Coding & Programming','Web Development',
-  'Cybersecurity','Smart Home','Travel','Budget Travel','Luxury Travel',
-  'Solo Travel','Van Life','Photography','Videography','Drone Footage',
-  'Music Production','Singing & Vocals','DJ & Electronic','Instrument Tutorials','Movie & TV Reviews',
-  'Film Analysis','Anime & Manga','Book Reviews','True Crime','History',
-  'Science Explained','Space & Astronomy','Nature & Wildlife','Environmental','Pet Care',
-  'Dog Training','Cat Content','Plant Care','Gardening','Home Renovation',
-  'Interior Design','Tiny Homes','Woodworking','DIY & Crafts','3D Printing',
-  'Art & Illustration','Digital Art','Drawing Tutorials','Calligraphy','Language Learning',
-  'Study Tips','Law School','Medical Students','Nursing','Career Advice',
-  'Resume & Job Search','Entrepreneurship','Business & Marketing','Real Estate','E-commerce & Dropshipping',
-  'Print on Demand','Freelancing','Digital Marketing','Social Media Growth','Content Creation',
-  'Podcasting','News & Current Events','Politics','Finance News','Daily Vlogging'
+  'ChatGPT tips','Coding with AI','Website building','App reviews','Tech hacks',
+  'Productivity apps','Notion','Automation','Side hustles with AI','Smartphone tricks',
+  'PC setups','Budget gadgets','Cybersecurity basics','Chrome extensions','Hidden websites',
+  'Startup ideas','Future technology','Coding memes','Tech news explained',
+  'Freelancing','Remote jobs','Resume tips','Interview hacks','Salary negotiation',
+  'Personal finance','Saving money','Investing basics','SIP education','Credit cards',
+  'Business case studies','Entrepreneurship','Agency building','Client acquisition','LinkedIn growth',
+  'Passive income','Online business','E-commerce','Digital marketing','Sales psychology',
+  'Habits','Discipline','Morning routine','Night routine','Stoicism',
+  'Psychology','Confidence','Public speaking','Communication','Time management',
+  'Dopamine detox','Reading','Goal setting','Motivation','Emotional intelligence',
+  'ADHD productivity','Minimalism','Journaling','Meditation','Focus techniques',
+  'Gym','Home workouts','Fat loss','Muscle gain','Nutrition',
+  'Healthy recipes','Supplements','Sleep optimization','Mobility','Running',
+  'Football fitness','Yoga','Skincare','Haircare','Men\u2019s grooming',
+  'Women\u2019s wellness','Mental health','Healthy habits','Stretching','Biohacking',
+  'Movie reviews','Movie facts','Hidden movie details','Anime','Web series',
+  'Netflix picks','Meme reviews','Internet culture','Celebrity news','Music reactions',
+  'Song breakdowns','Funny commentary','Viral trends','Roast videos','Challenge videos',
+  'Storytime','POV skits','Gaming memes','Internet mysteries','Pop culture',
+  'Daily vlogs','College life','Office life','Mumbai life','Travel',
+  'Budget travel','Food reviews','Caf\u00e9s','Fashion','Sneaker culture',
+  'Thrifting','Room makeover','Desk setup','Productivity desk','Budget lifestyle',
+  'Dating advice','Friend groups','Adulting','Life lessons','Minimal living',
+  'Instagram growth','YouTube tips','Reels strategy','Editing tutorials','CapCut edits',
+  'Premiere Pro','Thumbnail design','Branding','Content planning','Camera tips',
+  'Mobile videography','Lighting','Storytelling','Hook writing','Viral analysis',
+  'Creator income','Sponsorships','UGC creation','Portfolio building','Creator mistakes',
+  'Science facts','Space','History','Geography','Economics',
+  'Business lessons','Marketing','Branding','Human behavior','Negotiation',
+  'Philosophy','Myth busting','Book summaries','TED Talk summaries','Startup stories',
+  'Billionaire habits','Language learning','English speaking','General knowledge','Trivia',
+  'Valorant','BGMI','GTA','Minecraft','FIFA',
+  'Esports','Gaming setups','Gaming news','Funny moments','Speedruns',
+  'Gaming reviews','Mobile games','Steam deals','Horror games','Indie games',
+  'Gaming memes','Walkthroughs','Mods','Console comparisons','Gaming challenges',
+  'Psychology of movies','Marketing breakdowns','Brand case studies','NGO stories','Before vs after edits',
+  'Viral ad analysis','Productivity memes','Introvert life','Gen Z office humor','Relationship psychology',
+  'AI vs Human','Startup failures','Dark web facts (safe/legal)','Scam awareness','Digital privacy',
+  'Aesthetic filmmaking','Cinematic travel','Future careers','Daily learning challenge','1-minute knowledge'
 ];
 
 const nicheGrid = document.getElementById('nicheGrid');
@@ -1300,7 +1329,7 @@ if (nicheGrid) {
     nicheGrid.innerHTML = '';
     if (!term) {
       if (quizEmpty) {
-        quizEmpty.textContent = 'Start typing to explore all 100 niches.';
+        quizEmpty.textContent = 'Start typing to explore all 199 niches.';
         quizEmpty.classList.add('show');
       }
       return;
