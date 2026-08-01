@@ -38,7 +38,7 @@ html{ scroll-behavior: smooth; }
   *{ animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   .js .reveal{ opacity: 1 !important; transform: none !important; }
   #preloader{ display:none !important; }
-  .nav, .hero-vignette, .hero .eyebrow, .hero-title .line, .hero-sub, .hero-actions{ animation-play-state: running !important; }
+  .nav, .hero-vignette, .hero .eyebrow, .hero-title .line, .hero-underline, .hero-underline path, .hero-sub, .hero-actions{ animation-play-state: running !important; }
 }
 
 body{
@@ -86,6 +86,11 @@ img{ max-width: 100%; display: block; }
     conic-gradient(from 0deg, var(--gold-light), var(--gold), var(--gold-dark), var(--gold), var(--gold-light));
   position: relative;
   box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
+  animation: reelSpin 8s linear infinite;
+}
+@keyframes reelSpin{
+  from{ transform: rotate(0deg); }
+  to{ transform: rotate(360deg); }
 }
 .reel::before{
   content: "";
@@ -150,6 +155,7 @@ img{ max-width: 100%; display: block; }
 }
 .btn:hover{ transform: translateY(-2px); }
 .btn:active{ transform: scale(0.98); }
+.btn:disabled{ opacity: 0.45; cursor: not-allowed; transform: none; }
 
 .btn-solid{ background: var(--gold); color: var(--ink); border-color: var(--gold); }
 .btn-solid:hover{ background: var(--gold-light); border-color: var(--gold-light); }
@@ -189,7 +195,7 @@ img{ max-width: 100%; display: block; }
 .hero-title{
   position: relative;
   font-size: clamp(38px, 6vw, 68px);
-  line-height: 1.08;
+  line-height: 1;
   margin: 0 0 22px;
   font-weight: 600;
 }
@@ -199,6 +205,27 @@ img{ max-width: 100%; display: block; }
   margin: 0 auto 40px;
   font-size: 17px;
   color: rgba(247,244,236,0.78);
+}
+.hero-title .hl{
+  font-style: italic;
+  font-weight: 700;
+  color: var(--gold-light);
+}
+.hero-underline{
+  display: block;
+  width: min(72%, 330px);
+  height: 18px;
+  margin: 6px auto 0;
+  opacity: 0;
+  animation: fadeIn 500ms var(--ease-expo) forwards;
+  animation-delay: 1080ms;
+}
+.hero-underline path{
+  stroke: var(--gold-light);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: handDraw 1300ms var(--ease-expo) forwards;
+  animation-delay: 1080ms;
 }
 .hero-actions{
   position: relative;
@@ -224,6 +251,10 @@ img{ max-width: 100%; display: block; }
 @keyframes riseIn{
   from{ opacity: 0; transform: translateY(22px); }
   to{ opacity: 1; transform: none; }
+}
+@keyframes handDraw{
+  from{ stroke-dashoffset: 1; }
+  to{ stroke-dashoffset: 0; }
 }
 @keyframes fadeDown{
   from{ opacity: 0; transform: translateY(-10px); }
@@ -346,6 +377,103 @@ img{ max-width: 100%; display: block; }
 }
 .step p{ margin: 0; font-size: 14.5px; color: rgba(247,244,236,0.75); }
 
+/* ---------- Niche quiz ---------- */
+.niche-quiz{
+  max-width: var(--container);
+  margin: 64px auto 0;
+  text-align: left;
+  background: rgba(6,30,22,0.55);
+  border: 1px solid rgba(196,155,74,0.25);
+  border-radius: var(--radius);
+  padding: 32px clamp(20px, 4vw, 40px);
+  backdrop-filter: blur(6px);
+}
+.quiz-question{
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2.4vw, 22px);
+  color: var(--ivory);
+  margin: 0 0 4px;
+}
+.quiz-hint{
+  font-size: 13.5px;
+  color: rgba(247,244,236,0.6);
+  margin: 0 0 18px;
+}
+.quiz-bar{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+#nicheSearch{
+  flex: 1 1 240px;
+  max-width: 380px;
+  background: rgba(247,244,236,0.06);
+  border: 1px solid rgba(247,244,236,0.18);
+  border-radius: 999px;
+  color: var(--ivory);
+  font: inherit;
+  font-size: 14px;
+  padding: 10px 16px;
+  outline: none;
+  transition: border-color 240ms var(--ease-expo);
+}
+#nicheSearch::placeholder{ color: rgba(247,244,236,0.4); }
+#nicheSearch:focus{ border-color: var(--gold-light); }
+.quiz-count{
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin: 0 0 0 auto;
+}
+.niche-grid{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-bottom: 26px;
+}
+.niche-chip{
+  appearance: none;
+  border: 1px solid rgba(247,244,236,0.22);
+  background: rgba(247,244,236,0.03);
+  color: var(--ivory);
+  font: inherit;
+  font-size: 13.5px;
+  padding: 8px 15px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 240ms var(--ease-expo), background 240ms var(--ease-expo), color 240ms var(--ease-expo), transform 240ms var(--ease-expo);
+}
+.niche-chip:hover{ border-color: var(--gold-light); transform: translateY(-1px); }
+.niche-chip.selected{
+  background: var(--gold-light);
+  border-color: var(--gold-light);
+  color: var(--ink);
+}
+.niche-chip:disabled{ opacity: 0.35; cursor: not-allowed; transform: none; }
+.quiz-empty{
+  display: none;
+  font-size: 14px;
+  color: rgba(247,244,236,0.55);
+  margin: 0 0 26px;
+}
+.quiz-empty.show{ display: block; }
+.quiz-footer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.quiz-note{
+  font-size: 13px;
+  color: rgba(247,244,236,0.55);
+  margin: 0;
+}
+.quiz-note b{ color: var(--gold-light); font-weight: 600; }
+
 /* ---------- Results ---------- */
 .results-grid{
   display: grid;
@@ -460,11 +588,6 @@ img{ max-width: 100%; display: block; }
   text-align: center;
   padding: 48px 5vw 40px;
 }
-.footer-line{
-  font-size: 13px;
-  color: rgba(247,244,236,0.55);
-  margin: 16px 0 22px;
-}
 .footer-links{
   display: flex;
   gap: 22px;
@@ -492,19 +615,13 @@ img{ max-width: 100%; display: block; }
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 .pl-logo{
-  position:absolute; top:38px; left:0; right:0;
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  font-family:var(--font-display); font-weight:700; font-size:14px;
-  letter-spacing:0.35em; text-transform:uppercase; color:var(--gold-light);
+  position:absolute; top:34px; left:0; right:0;
+  display:flex; align-items:center; justify-content:center; gap:2px;
+  font-family:var(--font-display); font-weight:700; font-size:20px;
+  letter-spacing:0.06em; color:var(--ivory);
   opacity:0; animation: plFadeIn 600ms var(--ease-expo) forwards 100ms;
 }
-.pl-reel{
-  width:14px; height:14px; border-radius:50%;
-  background:
-    radial-gradient(circle at 30% 28%, rgba(255,255,255,0.55), rgba(255,255,255,0) 35%),
-    radial-gradient(circle at 50% 50%, var(--ink) 0 18%, transparent 19%),
-    conic-gradient(from 0deg, var(--gold-light), var(--gold), var(--gold-dark), var(--gold), var(--gold-light));
-}
+.pl-logo .reel{ width:18px; height:18px; }
 .pl-stages{
   position:absolute; bottom:34px; left:0; right:0;
   display:flex; align-items:center; justify-content:center; gap:22px;
@@ -603,6 +720,8 @@ img{ max-width: 100%; display: block; }
 .hero-vignette,
 .hero .eyebrow,
 .hero-title .line,
+.hero-underline,
+.hero-underline path,
 .hero-sub,
 .hero-actions{
   animation-play-state: paused;
@@ -611,6 +730,8 @@ body.preload-done .nav,
 body.preload-done .hero-vignette,
 body.preload-done .hero .eyebrow,
 body.preload-done .hero-title .line,
+body.preload-done .hero-underline,
+body.preload-done .hero-underline path,
 body.preload-done .hero-sub,
 body.preload-done .hero-actions{
   animation-play-state: running;
@@ -649,7 +770,7 @@ body.preload-done .hero-actions{
 <div id="preloader">
   <div class="grain"></div>
 
-  <div class="pl-logo"><span class="pl-reel"></span>Cinevoz</div>
+  <div class="pl-logo"><span class="logo-word">CINEV</span><span class="reel" aria-hidden="true"></span><span class="logo-word">Z</span></div>
 
   <div class="scene-stack">
 
@@ -727,8 +848,14 @@ body.preload-done .hero-actions{
   <!-- HERO -->
   <section class="hero">
     <div class="hero-vignette" aria-hidden="true"></div>
-    <p class="eyebrow eyebrow-light">Full-service social media agency</p>
-    <h1 class="hero-title"><span class="line">From your first video</span><br><span class="line">to your first 100k.</span></h1>
+    <h1 class="hero-title">
+      <span class="line">From your first video</span>
+      <span class="line"><em class="hl">to your first 100k.</em>
+        <svg class="hero-underline" viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M14 15 C 62 6, 116 19, 150 11 S 246 5, 286 14" fill="none" stroke-width="2.6" stroke-linecap="round"/>
+        </svg>
+      </span>
+    </h1>
     <p class="hero-sub">We shoot it, edit it, post it and grow it — you just show up. If you don't know your niche yet, that's step one, and it's on us too.</p>
     <div class="hero-actions">
       <a class="btn btn-solid" href="#contact">Start your journey</a>
@@ -824,6 +951,21 @@ body.preload-done .hero-actions{
         <p>Shoots, edits and posting schedule get built around that identity, and we keep sharpening it as your audience responds.</p>
       </div>
     </div>
+
+    <div class="niche-quiz reveal">
+      <p class="quiz-question">Find your lane — pick the niches that feel like you.</p>
+      <p class="quiz-hint">Search all 100, then choose up to 10. It's the first 5 minutes of our strategy call.</p>
+      <div class="quiz-bar">
+        <input id="nicheSearch" type="search" placeholder="Search 100 niches…" autocomplete="off" />
+        <p class="quiz-count"><b id="nicheCount">0</b> / 10 selected</p>
+      </div>
+      <div class="niche-grid" id="nicheGrid" role="group" aria-label="Pick your niches"></div>
+      <p class="quiz-empty" id="quizEmpty">No niches match that search. Try something broader.</p>
+      <div class="quiz-footer">
+        <button class="btn btn-solid" id="quizCta" type="button" disabled>Take your picks to a call</button>
+        <p class="quiz-note">Your picks drop straight into the contact form below — <b>no account needed.</b></p>
+      </div>
+    </div>
   </section>
 
   <!-- RESULTS -->
@@ -864,28 +1006,12 @@ body.preload-done .hero-actions{
 
   <!-- TEAM -->
   <section class="section" id="team">
-    <p class="eyebrow reveal">Who's behind it</p>
     <h2 class="section-title reveal">A small team, fully on your account.</h2>
     <div class="cards team-grid">
       <article class="team-card reveal">
-        <div class="avatar" aria-hidden="true">AK</div>
-        <h3>Amara K.</h3>
-        <p class="team-role">Strategy &amp; niche direction</p>
-      </article>
-      <article class="team-card reveal">
-        <div class="avatar" aria-hidden="true">DO</div>
-        <h3>Diego O.</h3>
-        <p class="team-role">Video shoots &amp; direction</p>
-      </article>
-      <article class="team-card reveal">
-        <div class="avatar" aria-hidden="true">RS</div>
-        <h3>Rhea S.</h3>
-        <p class="team-role">Editing &amp; motion</p>
-      </article>
-      <article class="team-card reveal">
-        <div class="avatar" aria-hidden="true">MJ</div>
-        <h3>Malik J.</h3>
-        <p class="team-role">PR &amp; community</p>
+        <div class="avatar" aria-hidden="true">SKG</div>
+        <h3>Sujith Kumar Ganesh</h3>
+        <p class="team-role">Founder</p>
       </article>
     </div>
   </section>
@@ -924,7 +1050,6 @@ body.preload-done .hero-actions{
   <a class="logo logo-small" href="#top" aria-label="Cinevoz home">
     <span class="logo-word">CINEV</span><span class="reel" aria-hidden="true"></span><span class="logo-word">Z</span>
   </a>
-  <p class="footer-line">Deep emerald · warm gold · ivory serif — editorial, cinematic, unhurried.</p>
   <div class="footer-links">
     <a href="#services">Services</a>
     <a href="#niche">Find your niche</a>
@@ -1060,6 +1185,105 @@ if (form) {
     status.textContent = "Thanks — we'll be in touch within one business day.";
     form.reset();
   });
+}
+
+// Niche quiz — pick from 100 niches, up to 10
+const NICHES = [
+  'Fitness','Nutrition & Diet','Weight Loss','Muscle Building','Yoga & Mobility',
+  'Running & Marathon','Sports Highlights','Personal Finance','Investing','Crypto',
+  'Side Hustles','Productivity & Habits','Self Improvement','Motivation & Mindset',
+  'Psychology','Mental Health','Meditation & Mindfulness','Cooking','Baking','Street Food',
+  'Restaurant Reviews','Food Science','Fashion','Streetwear','Thrifting',
+  'Beauty & Makeup','Skincare','Hair','Nails & Manicure','Grooming',
+  'Gaming','Esports','Game Development','Mobile Games','Streaming / IRL',
+  'Tech Reviews','Gadgets & Unboxings','AI & Machine Learning','Coding & Programming','Web Development',
+  'Cybersecurity','Smart Home','Travel','Budget Travel','Luxury Travel',
+  'Solo Travel','Van Life','Photography','Videography','Drone Footage',
+  'Music Production','Singing & Vocals','DJ & Electronic','Instrument Tutorials','Movie & TV Reviews',
+  'Film Analysis','Anime & Manga','Book Reviews','True Crime','History',
+  'Science Explained','Space & Astronomy','Nature & Wildlife','Environmental','Pet Care',
+  'Dog Training','Cat Content','Plant Care','Gardening','Home Renovation',
+  'Interior Design','Tiny Homes','Woodworking','DIY & Crafts','3D Printing',
+  'Art & Illustration','Digital Art','Drawing Tutorials','Calligraphy','Language Learning',
+  'Study Tips','Law School','Medical Students','Nursing','Career Advice',
+  'Resume & Job Search','Entrepreneurship','Business & Marketing','Real Estate','E-commerce & Dropshipping',
+  'Print on Demand','Freelancing','Digital Marketing','Social Media Growth','Content Creation',
+  'Podcasting','News & Current Events','Politics','Finance News','Daily Vlogging'
+];
+
+const nicheGrid = document.getElementById('nicheGrid');
+const nicheSearch = document.getElementById('nicheSearch');
+const nicheCount = document.getElementById('nicheCount');
+const quizCta = document.getElementById('quizCta');
+const quizEmpty = document.getElementById('quizEmpty');
+const messageField = document.getElementById('message');
+const MAX_PICKS = 10;
+
+if (nicheGrid) {
+  const selected = new Set();
+
+  const render = () => {
+    const term = (nicheSearch ? nicheSearch.value : '').trim().toLowerCase();
+    nicheGrid.innerHTML = '';
+    if (!term) {
+      if (quizEmpty) {
+        quizEmpty.textContent = 'Start typing to explore all 100 niches.';
+        quizEmpty.classList.add('show');
+      }
+      return;
+    }
+    let visible = 0;
+    NICHES.forEach((niche) => {
+      if (!niche.toLowerCase().includes(term)) return;
+      visible++;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'niche-chip' + (selected.has(niche) ? ' selected' : '');
+      btn.textContent = niche;
+      btn.setAttribute('aria-pressed', String(selected.has(niche)));
+      btn.disabled = !selected.has(niche) && selected.size >= MAX_PICKS;
+      btn.addEventListener('click', () => {
+        if (selected.has(niche)) selected.delete(niche);
+        else if (selected.size >= MAX_PICKS) return;
+        else selected.add(niche);
+        render();
+        updateCount();
+      });
+      nicheGrid.appendChild(btn);
+    });
+    if (quizEmpty) {
+      if (visible === 0) {
+        quizEmpty.textContent = 'No niches match that search. Try something broader.';
+        quizEmpty.classList.add('show');
+      } else {
+        quizEmpty.classList.remove('show');
+      }
+    }
+  };
+
+  const updateCount = () => {
+    if (nicheCount) nicheCount.textContent = String(selected.size);
+    if (quizCta) quizCta.disabled = selected.size === 0;
+  };
+
+  if (nicheSearch) {
+    nicheSearch.addEventListener('input', () => { render(); updateCount(); });
+  }
+
+  if (quizCta) {
+    quizCta.addEventListener('click', () => {
+      if (selected.size === 0) return;
+      const list = Array.from(selected).join(', ');
+      if (messageField) {
+        messageField.value = 'Niche picks: ' + list;
+      }
+      document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => document.getElementById('name').focus(), 600);
+    });
+  }
+
+  render();
+  updateCount();
 }
 </script>
 </body>
