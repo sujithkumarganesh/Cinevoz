@@ -469,6 +469,25 @@ img{ max-width: 100%; display: block; }
 }
 .shake-heart{ color: var(--gold); }
 
+/* Cute toast — appears anywhere on shake */
+#cuteToast{
+  position:fixed; left:50%; top:42%; z-index:1350;
+  transform:translate(-50%, -50%) scale(0.85);
+  background:var(--ivory);
+  border:1px solid rgba(196,155,74,0.45);
+  color:var(--emerald);
+  padding:22px 40px;
+  border-radius:20px;
+  font-family:var(--font-display);
+  font-size:clamp(22px, 5vw, 32px);
+  font-weight:600;
+  text-align:center;
+  box-shadow:0 24px 60px rgba(20,18,13,0.35);
+  opacity:0; pointer-events:none;
+  transition:opacity 400ms var(--ease-oily), transform 400ms var(--ease-oily);
+}
+#cuteToast.show{ opacity:1; transform:translate(-50%, -50%) scale(1); }
+
 /* ---------- Niche quiz ---------- */
 .niche-quiz{
   max-width: var(--container);
@@ -1248,7 +1267,6 @@ body.preload-done .hero-actions{
     <p class="shake-lede reveal">Give it a little shake — we've got something to tell you.</p>
     <div class="shake-stage reveal">
       <div class="shake-phone" aria-hidden="true"><span class="shake-screen"></span></div>
-      <p class="shake-message" id="cuteMessage" role="status" aria-live="polite">You're looking very cute <span class="shake-heart">♥</span></p>
     </div>
   </section>
 
@@ -1710,7 +1728,7 @@ if (nicheGrid) {
   let savedScroll = null;
   let touchActive = false;
   let waterOffset = 0;
-  const GAIN = 110;
+  const GAIN = 260;
   const MAX_TILT = 85;
   const waterEl = document.getElementById('water');
   const DRIFT_MAX = 48;
@@ -1761,11 +1779,22 @@ if (nicheGrid) {
   let cuteTimer = null;
 
   function showCute() {
-    const msg = document.getElementById('cuteMessage');
-    if (!msg) return;
+    let toast = document.getElementById('cuteToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'cuteToast';
+      toast.setAttribute('role', 'status');
+      toast.setAttribute('aria-live', 'polite');
+      toast.innerHTML = "You're looking very cute <span class='shake-heart'>♥</span>";
+      document.body.appendChild(toast);
+    }
     clearTimeout(cuteTimer);
-    cuteTimer = setTimeout(() => msg.classList.add('show'), 3000);
-    setTimeout(() => msg.classList.remove('show'), 10000);
+    cuteTimer = setTimeout(() => {
+      toast.classList.remove('show');
+      void toast.offsetWidth;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 5000);
+    }, 3000);
   }
 
   function loop(timestamp) {
@@ -1777,7 +1806,7 @@ if (nicheGrid) {
       const desired = Math.max(0, Math.min(max, neutralScroll - targetOffset));
       const diff = desired - cur;
       if (Math.abs(diff) > 0.5) {
-        const ease = 0.18;
+        const ease = 0.32;
         const k = 1 - Math.pow(1 - ease, dt / 16.67);
         window.scrollTo(0, cur + diff * k);
       }
