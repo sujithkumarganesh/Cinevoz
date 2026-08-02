@@ -50,6 +50,7 @@ body{
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  touch-action: auto;
 }
 
 h1, h2, h3{ font-family: var(--font-display); font-weight: 600; margin: 0; color: inherit; }
@@ -866,6 +867,7 @@ img{ max-width: 100%; display: block; }
 /* Water layer — whole page drifts with tilt */
 #water{
   will-change: transform;
+  touch-action: auto;
 }
 
 /* Logo pop bubble — "hey you choose the right one" */
@@ -1401,6 +1403,7 @@ document.documentElement.classList.add('js');
     document.body.classList.add('preload-done');
     preloader.classList.add('exit');
     document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
     buzz();
     sayHi();
     setTimeout(() => {
@@ -1410,6 +1413,7 @@ document.documentElement.classList.add('js');
   }
 
   document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
 
   setTimeout(() => showScene(0), 250);
   setTimeout(() => showScene(1), 250 + SCENE_DURATION);
@@ -1754,7 +1758,7 @@ if (nicheGrid) {
   let restoreTo = null;
   let touchActive = false;
   let waterOffset = 0;
-  const DEAD = 5;
+  const DEAD = 9;
   const RAMP = 16;
   const MAX_AUTO = 170;
   const waterEl = document.getElementById('water');
@@ -1785,12 +1789,14 @@ if (nicheGrid) {
     lastDelta = delta;
     if (delta > DEAD) { autoDir = -1; autoMag = Math.min((delta - DEAD) / RAMP, 1); }
     else if (delta < -DEAD) { autoDir = 1; autoMag = Math.min((-delta - DEAD) / RAMP, 1); }
-    else { autoDir = 0; autoMag = 0; baseline += delta * 0.1; }
+    else { autoDir = 0; autoMag = 0; }
+    baseline += (b - baseline) * 0.008;
   }
 
   let lastFrame = null;
   let lastShake = 0;
   let cuteTimer = null;
+  let lastUserScroll = 0;
 
   function showCute() {
     let toast = document.getElementById('cuteToast');
@@ -1813,7 +1819,8 @@ if (nicheGrid) {
 
   function loop(timestamp) {
     const dt = lastFrame === null ? 16.67 : Math.min(timestamp - lastFrame, 50);
-    if (!touchActive) {
+    const frozen = touchActive || (performance.now() - lastUserScroll < 400);
+    if (!frozen) {
       const cur = window.scrollY;
       const max = document.documentElement.scrollHeight - window.innerHeight;
       if (restoreTo !== null) {
@@ -1862,14 +1869,24 @@ if (nicheGrid) {
     window.addEventListener('devicemotion', onMotion, { passive: true });
     window.addEventListener('touchstart', () => {
       touchActive = true;
+      lastUserScroll = performance.now();
       baseline = null;
       autoDir = 0; autoMag = 0; lastDelta = 0; scrollVel = 0;
       waterOffset = 0;
       if (waterEl) waterEl.style.transform = '';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }, { passive: true });
+    window.addEventListener('touchmove', () => {
+      lastUserScroll = performance.now();
     }, { passive: true });
     window.addEventListener('touchend', () => {
       touchActive = false;
+      lastUserScroll = performance.now();
       baseline = null;
+    }, { passive: true });
+    window.addEventListener('wheel', () => {
+      lastUserScroll = performance.now();
     }, { passive: true });
     const hint = document.getElementById('tiltHint');
     if (hint) {
