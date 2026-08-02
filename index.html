@@ -1066,7 +1066,7 @@ body.preload-done .hero-actions{
 </div>
 
 <div id="welcomeToast" role="status" aria-live="polite">Hi, thank you for choosing us</div>
-<div id="tiltHint">Tilt down your phone for auto scroll</div>
+<div id="tiltHint">Tilt down to auto scroll</div>
 
 <div id="water">
 
@@ -1434,7 +1434,14 @@ const logoEls = document.querySelectorAll('.logo');
 let logoPopEl = null;
 let logoPopTimer = null;
 
+function vibrateTap(pattern) {
+  try {
+    if (navigator.vibrate) navigator.vibrate(pattern);
+  } catch (err) {}
+}
+
 function popLogoHint(logo) {
+  vibrateTap(30);
   if (!logoPopEl) {
     logoPopEl = document.createElement('div');
     logoPopEl.className = 'logo-pop';
@@ -1460,6 +1467,7 @@ logoEls.forEach((logo) => {
 
 // Double-tap / double-click celebration — 5 seconds of confetti
 function runCelebration() {
+  vibrateTap([80, 40, 80, 40, 120]);
   const canvas = document.createElement('canvas');
   canvas.id = 'celebrate';
   canvas.width = window.innerWidth;
@@ -1542,10 +1550,16 @@ if ('IntersectionObserver' in window) {
 
 // Camera selfie shutter — sound + white flash
 let snapCtx = null;
+window.addEventListener('pointerdown', () => {
+  if (!snapCtx) snapCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (snapCtx && snapCtx.state === 'suspended') snapCtx.resume();
+}, { once: true });
+
 function snapFlash() {
   try {
     if (!snapCtx) snapCtx = new (window.AudioContext || window.webkitAudioContext)();
     const ctx = snapCtx;
+    if (ctx.state === 'suspended') ctx.resume();
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -1556,6 +1570,15 @@ function snapFlash() {
     osc.connect(gain).connect(ctx.destination);
     osc.start(now);
     osc.stop(now + 0.06);
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'square';
+    osc2.frequency.setValueAtTime(1500, now + 0.13);
+    gain2.gain.setValueAtTime(0.07, now + 0.13);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+    osc2.connect(gain2).connect(ctx.destination);
+    osc2.start(now + 0.13);
+    osc2.stop(now + 0.19);
     const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.15), ctx.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2);
@@ -1580,6 +1603,7 @@ function snapFlash() {
   void flash.offsetWidth;
   flash.classList.add('go');
   setTimeout(() => flash.classList.remove('go'), 350);
+  vibrateTap([50, 40, 90]);
 }
 
 // Contact form (demo — replace with a real endpoint)
@@ -1722,14 +1746,18 @@ if (nicheGrid) {
   if (!('DeviceOrientationEvent' in window)) return;
 
   let baseline = null;
-  let neutralScroll = null;
-  let targetOffset = 0;
+  let autoDir = 0;
+  let autoMag = 0;
+  let lastDelta = 0;
+  let scrollVel = 0;
   let toBottom = false;
   let savedScroll = null;
+  let restoreTo = null;
   let touchActive = false;
   let waterOffset = 0;
-  const GAIN = 260;
-  const MAX_TILT = 85;
+  const DEAD = 5;
+  const RAMP = 16;
+  const MAX_AUTO = 170;
   const waterEl = document.getElementById('water');
   const DRIFT_MAX = 48;
   const DRIFT_GAIN = 1.2;
@@ -1737,41 +1765,28 @@ if (nicheGrid) {
   function onOrient(e) {
     if (touchActive) return;
     const b = e.beta;
-    if (b == null) { baseline = null; neutralScroll = null; return; }
+    if (b == null) { baseline = null; return; }
     if (b < -120) {
       if (!toBottom) {
         toBottom = true;
         savedScroll = window.scrollY;
         window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
       }
-      targetOffset = 0;
-      baseline = null;
-      neutralScroll = null;
+      autoDir = 0; autoMag = 0; lastDelta = 0; baseline = null;
       return;
     }
     if (toBottom) {
       toBottom = false;
-      targetOffset = 0;
-      baseline = null;
-      if (savedScroll !== null) {
-        neutralScroll = savedScroll;
-        savedScroll = null;
-      }
+      autoDir = 0; autoMag = 0; lastDelta = 0; baseline = null;
+      if (savedScroll !== null) { restoreTo = savedScroll; savedScroll = null; }
       return;
     }
-    if (baseline === null) {
-      baseline = b;
-      neutralScroll = window.scrollY;
-      return;
-    }
+    if (baseline === null) { baseline = b; return; }
     const delta = b - baseline;
-    if (Math.abs(delta) < 3) {
-      baseline += delta * 0.1;
-      neutralScroll += (window.scrollY - neutralScroll) * 0.1;
-      targetOffset = 0;
-    } else {
-      targetOffset = Math.max(-MAX_TILT, Math.min(MAX_TILT, delta)) * GAIN;
-    }
+    lastDelta = delta;
+    if (delta > DEAD) { autoDir = -1; autoMag = Math.min((delta - DEAD) / RAMP, 1); }
+    else if (delta < -DEAD) { autoDir = 1; autoMag = Math.min((-delta - DEAD) / RAMP, 1); }
+    else { autoDir = 0; autoMag = 0; baseline += delta * 0.1; }
   }
 
   let lastFrame = null;
@@ -1793,25 +1808,28 @@ if (nicheGrid) {
       toast.classList.remove('show');
       void toast.offsetWidth;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 5000);
-    }, 3000);
+      setTimeout(() => toast.classList.remove('show'), 4000);
+    }, 1000);
   }
 
   function loop(timestamp) {
     const dt = lastFrame === null ? 16.67 : Math.min(timestamp - lastFrame, 50);
     if (!touchActive) {
       const cur = window.scrollY;
-      if (neutralScroll === null) neutralScroll = cur;
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      const desired = Math.max(0, Math.min(max, neutralScroll - targetOffset));
-      const diff = desired - cur;
-      if (Math.abs(diff) > 0.5) {
-        const ease = 0.32;
-        const k = 1 - Math.pow(1 - ease, dt / 16.67);
-        window.scrollTo(0, cur + diff * k);
+      if (restoreTo !== null) {
+        const diff = restoreTo - cur;
+        if (Math.abs(diff) > 1) window.scrollTo(0, cur + diff * 0.22);
+        else restoreTo = null;
+      } else if (autoDir !== 0) {
+        const targetVel = autoDir * autoMag * MAX_AUTO;
+        scrollVel += (targetVel - scrollVel) * 0.25;
+        window.scrollBy(0, scrollVel * (dt / 16.67));
+      } else {
+        scrollVel = 0;
       }
       if (waterEl) {
-        const rawDrift = -Math.max(-MAX_TILT, Math.min(MAX_TILT, targetOffset / GAIN)) * DRIFT_GAIN;
+        const rawDrift = -Math.max(-DEAD - RAMP, Math.min(DEAD + RAMP, lastDelta)) * DRIFT_GAIN;
         let drift = Math.max(-DRIFT_MAX, Math.min(DRIFT_MAX, rawDrift));
         if (drift > 0) drift = Math.min(drift, cur);
         else drift = Math.max(drift, -(max - cur));
@@ -1846,16 +1864,13 @@ if (nicheGrid) {
     window.addEventListener('touchstart', () => {
       touchActive = true;
       baseline = null;
-      neutralScroll = null;
-      targetOffset = 0;
+      autoDir = 0; autoMag = 0; lastDelta = 0; scrollVel = 0;
       waterOffset = 0;
       if (waterEl) waterEl.style.transform = '';
     }, { passive: true });
     window.addEventListener('touchend', () => {
       touchActive = false;
       baseline = null;
-      neutralScroll = null;
-      targetOffset = 0;
     }, { passive: true });
     const hint = document.getElementById('tiltHint');
     if (hint) {
