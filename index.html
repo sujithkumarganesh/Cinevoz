@@ -1751,7 +1751,6 @@ if (nicheGrid) {
   let lastDelta = 0;
   let scrollVel = 0;
   let toBottom = false;
-  let savedScroll = null;
   let restoreTo = null;
   let touchActive = false;
   let waterOffset = 0;
@@ -1769,7 +1768,6 @@ if (nicheGrid) {
     if (b < -120) {
       if (!toBottom) {
         toBottom = true;
-        savedScroll = window.scrollY;
         window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
       }
       autoDir = 0; autoMag = 0; lastDelta = 0; baseline = null;
@@ -1778,7 +1776,8 @@ if (nicheGrid) {
     if (toBottom) {
       toBottom = false;
       autoDir = 0; autoMag = 0; lastDelta = 0; baseline = null;
-      if (savedScroll !== null) { restoreTo = savedScroll; savedScroll = null; }
+      restoreTo = 0;
+      savedScroll = null;
       return;
     }
     if (baseline === null) { baseline = b; return; }
