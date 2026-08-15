@@ -3,11 +3,263 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Cinevoz</title>
+<title>Sujith Suriya — Cinematographer &amp; Editor</title>
+<meta name="description" content="Sujith Suriya — cinematographer and editor. Weddings, pre-weddings, sangeet, haldi, product films and the edits that hold them together." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
 <style>
-  body{ margin: 0; background: #fff; }
+:root{
+  --black: #0B0B0B;
+  --white: #F7F7F5;
+  --graphite: #1E1E1E;
+  --silver: #9A9A9A;
+  --hairline: rgba(255,255,255,0.10);
+  --display: "Fraunces", Georgia, serif;
+  --utility: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+*, *::before, *::after{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+body{
+  margin: 0;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--utility);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a{ color: inherit; }
+img{ max-width: 100%; display: block; }
+.eyebrow{
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--silver);
+}
+
+/* ---------- Hero ---------- */
+.hero{
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 140px 24px 0;
+}
+.hero-eyebrow{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--hairline);
+}
+.hero-title{
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(3rem, 10vw, 6.5rem);
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  margin: 48px 0 0;
+}
+.hero-sub{
+  color: var(--silver);
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 36rem;
+  margin: 24px 0 0;
+}
+
+/* ---------- Sections ---------- */
+.section{
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 120px 24px 0;
+}
+.section-title{
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 6vw, 3.5rem);
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+  margin: 24px 0 0;
+}
+.section-copy{
+  color: var(--silver);
+  font-size: 15.5px;
+  line-height: 1.75;
+  max-width: 40rem;
+  margin: 20px 0 0;
+}
+.section-copy strong{ color: var(--white); font-weight: 500; }
+
+/* ---------- Shot List ---------- */
+.shot-eyebrow{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--hairline);
+}
+.shot-list{
+  margin: 56px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.shot-row{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  padding: 22px 0;
+  border-top: 1px solid var(--hairline);
+}
+.shot-format{
+  color: var(--silver);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: color 280ms ease;
+}
+.shot-name{
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.75rem, 4.5vw, 2.5rem);
+  line-height: 1.1;
+  margin: 0;
+  transition: transform 280ms ease;
+}
+.shot-desc{
+  color: var(--silver);
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 44ch;
+  transition: color 280ms ease;
+}
+
+/* ---------- Footer ---------- */
+.footer{
+  max-width: 56rem;
+  margin: 120px auto 0;
+  padding: 28px 24px 56px;
+  border-top: 1px solid var(--hairline);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--silver);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ---------- Responsive ---------- */
+@media (min-width: 768px){
+  .shot-row{
+    grid-template-columns: 220px minmax(0, 1fr) minmax(0, 1.05fr);
+    align-items: baseline;
+    gap: 32px;
+    padding: 34px 0;
+  }
+  .shot-format{ font-size: 12.5px; }
+  .shot-desc{ font-size: 15px; max-width: 38ch; }
+}
+@media (hover: hover) and (pointer: fine){
+  .shot-row:hover .shot-format,
+  .shot-row:hover .shot-desc{ color: var(--white); }
+  .shot-row:hover .shot-name{ transform: translateX(14px); }
+}
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior: auto; }
+  .shot-row *{ transition-duration: 0.01ms !important; }
+  .shot-row:hover .shot-name{ transform: none; }
+}
 </style>
 </head>
 <body>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-eyebrow">
+      <span class="eyebrow">Cinematographer — Editor — Photographer</span>
+      <span class="eyebrow">India</span>
+    </div>
+    <h1 class="hero-title">Sujith Suriya</h1>
+    <p class="hero-sub">
+      I shoot it, I cut it, and I make it feel like yours. Weddings,
+      pre-weddings, live events and product films — framed on purpose,
+      edited with intent, and delivered to last.
+    </p>
+  </header>
+
+  <main>
+
+    <!-- ABOUT -->
+    <section class="section" aria-labelledby="about-title">
+      <p class="eyebrow">About</p>
+      <h2 id="about-title" class="section-title">The frame is half the story. The cut is the rest.</h2>
+      <p class="section-copy">
+        I'm Sujith Suriya, a cinematographer and editor who works a job
+        end-to-end — from the first location scout to the final grade.
+        I've shot sangeets at full volume and stills at whisper level, and
+        the one thing I've learned is that <strong>every frame has a job</strong>.
+        Mine is making sure it does it.
+      </p>
+    </section>
+
+    <!-- SHOT LIST -->
+    <section class="section" aria-labelledby="shot-list-title">
+      <div class="shot-eyebrow">
+        <span class="eyebrow">Production — Sujith Suriya</span>
+        <span class="eyebrow">Department — Camera + Edit</span>
+      </div>
+      <h2 id="shot-list-title" class="section-title">The Shot List</h2>
+      <p class="section-copy">
+        Six formats, one crew — the exact way I shoot and cut every job that
+        comes through. Each row is tagged with the aspect ratio that kind of
+        shoot actually runs on, like entries in a real shot list.
+      </p>
+
+      <ul class="shot-list" role="list">
+        <li class="shot-row">
+          <span class="shot-format">1:1 · Studio Still</span>
+          <h3 class="shot-name">Product Shoots</h3>
+          <p class="shot-desc">One product, one concept — studio frames lit to sell it without a word.</p>
+        </li>
+        <li class="shot-row">
+          <span class="shot-format">3:2 · Location Film</span>
+          <h3 class="shot-name">Pre-Wedding Shoots</h3>
+          <p class="shot-desc">Location films that let a couple's real chemistry lead the frame.</p>
+        </li>
+        <li class="shot-row">
+          <span class="shot-format">2.39:1 · Cinematic</span>
+          <h3 class="shot-name">Wedding Shoots</h3>
+          <p class="shot-desc">The full day shot live, then cut into a story worth keeping for years.</p>
+        </li>
+        <li class="shot-row">
+          <span class="shot-format">16:9 · Event Coverage</span>
+          <h3 class="shot-name">Sangeet</h3>
+          <p class="shot-desc">Candid, high-energy coverage that catches every reaction the music earns.</p>
+        </li>
+        <li class="shot-row">
+          <span class="shot-format">4:5 · Vertical / Reel</span>
+          <h3 class="shot-name">Haldi</h3>
+          <p class="shot-desc">Sun-drenched closeups in bold color, framed and cut for the vertical feed.</p>
+        </li>
+        <li class="shot-row">
+          <span class="shot-format">— · Post-Production</span>
+          <h3 class="shot-name">All Types of Edit</h3>
+          <p class="shot-desc">Every format above, cut to each platform's rhythm — sound and subtitles dialed in.</p>
+        </li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <span>© 2026 Sujith Suriya</span>
+    <span>Shot · Cut · Kept</span>
+  </footer>
+
 </body>
 </html>
