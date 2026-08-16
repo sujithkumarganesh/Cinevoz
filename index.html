@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sujith Suriya — Cinematographer &amp; Editor</title>
-<meta name="description" content="Sujith Suriya — cinematographer and editor. Weddings, pre-weddings, sangeet, haldi, product films and the edits that hold them together." />
+<title>Sujith Suriya — Creative Director &amp; Storyteller</title>
+<meta name="description" content="Sujith Suriya — creative director and storyteller. Weddings, events, product films and the social content that gets them seen — framed on purpose, edited with intent." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet" />
@@ -255,6 +255,20 @@ img{ max-width: 100%; display: block; }
   transition: color 280ms ease;
 }
 
+/* ---------- Scroll Reveal ---------- */
+.reveal{
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-visible{
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce){
+  .reveal{ opacity: 1; transform: none; transition: none; }
+}
+
 /* ---------- Modal ---------- */
 .modal{
   position: fixed;
@@ -390,14 +404,14 @@ body.modal-open{ overflow: hidden; }
   <!-- HERO -->
   <header class="hero">
     <div class="hero-eyebrow">
-      <span class="eyebrow">Cinematographer — Editor — Photographer</span>
+      <span class="eyebrow">Creative Director &amp; Storyteller</span>
       <span class="eyebrow">India</span>
     </div>
     <h1 class="hero-title">Sujith Suriya</h1>
     <p class="hero-sub">
-      I shoot it, I cut it, and I make it feel like yours. Weddings,
-      pre-weddings, live events and product films — framed on purpose,
-      edited with intent, and delivered to last.
+      I shoot it, I cut it, I make it move online. Weddings, events,
+      product films, and the social content that gets them seen —
+      framed on purpose, edited with intent.
     </p>
   </header>
 
@@ -425,7 +439,7 @@ body.modal-open{ overflow: hidden; }
       <p class="eyebrow">About</p>
       <h2 id="about-title" class="section-title">The frame is half the story. The cut is the rest.</h2>
       <p class="section-copy">
-        I'm Sujith Suriya, a cinematographer and editor who works a job
+        I'm Sujith Suriya, a creative director and storyteller who works a job
         end-to-end — from the first location scout to the final grade.
         I've shot sangeets at full volume and stills at whisper level, and
         the one thing I've learned is that <strong>every frame has a job</strong>.
@@ -476,6 +490,37 @@ body.modal-open{ overflow: hidden; }
           <span class="shot-format">— · Post-Production</span>
           <h3 class="shot-name">All Types of Edit</h3>
           <p class="shot-desc">Every format above, cut to each platform's rhythm — sound and subtitles dialed in.</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- SOCIAL MEDIA -->
+    <section class="section" aria-labelledby="social-media-title">
+      <div class="shot-eyebrow">
+        <span class="eyebrow">Beyond the Frame</span>
+        <span class="eyebrow">Department — Strategy + Production</span>
+      </div>
+      <h2 id="social-media-title" class="section-title">Social Media, A to Z</h2>
+      <p class="section-copy">
+        Every frame I shoot is built to live somewhere — a feed, a reel, a
+        story. I handle the full pipeline, from the first idea to the final post.
+      </p>
+
+      <ul class="shot-list" role="list">
+        <li class="shot-row">
+          <span class="shot-format">Strategy</span>
+          <h3 class="shot-name">Ideation &amp; Scripting</h3>
+          <p class="shot-desc">Content built to stop the scroll, not just fill a calendar.</p>
+        </li>
+        <li class="shot-row">
+          <span class="shot-format">Production</span>
+          <h3 class="shot-name">Shooting &amp; Editing</h3>
+          <p class="shot-desc">The same craft behind every wedding film, sized for Reels and Shorts.</p>
+        </li>
+        <li class="shot-row">
+          <span class="shot-format">Research</span>
+          <h3 class="shot-name">Hook &amp; Trend Research</h3>
+          <p class="shot-desc">Timing content to what's working now, not what worked last month.</p>
         </li>
       </ul>
     </section>
@@ -779,6 +824,25 @@ body.modal-open{ overflow: hidden; }
         showPhoto();
       }
     });
+  })();
+
+  (function(){
+    var prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var rows = document.querySelectorAll(".shot-row");
+    if (prefersReduced || !("IntersectionObserver" in window) || !rows.length) return;
+    rows.forEach(function(row, i){
+      row.classList.add("reveal");
+      row.style.transitionDelay = Math.min(i % 6, 5) * 60 + "ms";
+    });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          entry.target.classList.add("is-visible");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+    rows.forEach(function(row){ io.observe(row); });
   })();
   </script>
 

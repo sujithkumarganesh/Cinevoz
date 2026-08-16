@@ -1,4 +1,5 @@
 import { Fraunces, Space_Grotesk } from "next/font/google";
+import { useEffect, useRef } from "react";
 
 /*
  * Fonts are loaded here via next/font/google so the component is fully
@@ -64,6 +65,32 @@ const SHOT_LIST = [
   },
 ];
 
+/*
+ * The social pipeline, laid out in the same tag + title + description
+ * rhythm as the shot list above. Reuses the exact tsl-* classes so this
+ * section inherits the same typography, hairline dividers and hover
+ * treatment without any new styles beyond a separating rule.
+ */
+const SOCIAL_LIST = [
+  {
+    tag: "Strategy",
+    title: "Ideation & Scripting",
+    description: "Content built to stop the scroll, not just fill a calendar.",
+  },
+  {
+    tag: "Production",
+    title: "Shooting & Editing",
+    description:
+      "The same craft behind every wedding film, sized for Reels and Shorts.",
+  },
+  {
+    tag: "Research",
+    title: "Hook & Trend Research",
+    description:
+      "Timing content to what's working now, not what worked last month.",
+  },
+];
+
 /**
  * The Shot List — a work-profile section listing shoot categories as entries
  * in a director's shot list. Self-contained, default export, no props.
@@ -72,9 +99,40 @@ const SHOT_LIST = [
  * so there is no React state and no re-render of the list on hover.
  */
 export default function WorkProfileSection() {
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const prefersReduced =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const rows = sectionRef.current
+      ? sectionRef.current.querySelectorAll(".tsl-row")
+      : [];
+    if (prefersReduced || !("IntersectionObserver" in window) || rows.length === 0) return;
+
+    rows.forEach((row, i) => {
+      row.classList.add("tsl-reveal");
+      row.style.transitionDelay = Math.min(i % 6, 5) * 60 + "ms";
+    });
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("tsl-visible");
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+    rows.forEach((row) => io.observe(row));
+    return () => io.disconnect();
+  }, []);
+
   return (
     <section
       aria-labelledby="shot-list-title"
+      ref={sectionRef}
       className={`tsl-section ${spaceGrotesk.className}`}
     >
       <div className="mx-auto w-full max-w-4xl px-6 py-20 md:py-32">
@@ -104,6 +162,40 @@ export default function WorkProfileSection() {
               {/* The format code + tag replace a generic index (see SHOT_LIST note) */}
               <span className="tsl-format">{row.format}</span>
               <h3 className={`tsl-name ${fraunces.className}`}>{row.name}</h3>
+              <p className="tsl-desc">{row.description}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Social Media, A to Z — same pattern as The Shot List, no new styling */}
+      <div className="mx-auto w-full max-w-4xl px-6 py-20 md:py-32">
+        <div className="tsl-social-sep" />
+
+        <header>
+          <div className="tsl-eyebrow flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between">
+            <span>Beyond the Frame</span>
+            <span className="md:text-right">Department — Strategy + Production</span>
+          </div>
+
+          <h2
+            id="social-media-title"
+            className={`tsl-title ${fraunces.className}`}
+          >
+            Social Media, A to Z
+          </h2>
+
+          <p className="tsl-subhead">
+            Every frame I shoot is built to live somewhere — a feed, a reel, a
+            story. I handle the full pipeline, from the first idea to the final post.
+          </p>
+        </header>
+
+        <ul className="tsl-list" role="list">
+          {SOCIAL_LIST.map((row) => (
+            <li key={row.title} className="tsl-row">
+              <span className="tsl-format">{row.tag}</span>
+              <h3 className={`tsl-name ${fraunces.className}`}>{row.title}</h3>
               <p className="tsl-desc">{row.description}</p>
             </li>
           ))}
@@ -151,6 +243,27 @@ export default function WorkProfileSection() {
           line-height: 1.7;
           max-width: 36rem;
           margin: 20px 0 0;
+        }
+
+        /* Divider between The Shot List and the social section */
+        .tsl-social-sep{
+          height: 1px;
+          background: var(--tsl-hairline);
+          margin-bottom: 56px;
+        }
+
+        /* Scroll reveal — applied via JS, skipped for reduced motion */
+        .tsl-reveal{
+          opacity: 0;
+          transform: translateY(18px);
+          transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .tsl-reveal.tsl-visible{
+          opacity: 1;
+          transform: none;
+        }
+        @media (prefers-reduced-motion: reduce){
+          .tsl-reveal{ opacity: 1; transform: none; transition: none; }
         }
 
         /* List */
