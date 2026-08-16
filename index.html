@@ -14,11 +14,13 @@
   --white: #F7F7F5;
   --graphite: #1E1E1E;
   --silver: #9A9A9A;
+  --gold: #C9A25E;
   --hairline: rgba(255,255,255,0.10);
   --display: "Fraunces", Georgia, serif;
   --utility: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 *, *::before, *::after{ box-sizing: border-box; }
+[hidden]{ display: none !important; }
 html{ scroll-behavior: smooth; }
 body{
   margin: 0;
@@ -232,6 +234,168 @@ img{ max-width: 100%; display: block; }
   .hero-sub{ animation: none; }
 }
 
+/* ---------- Notification ---------- */
+.notify{
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%) translateY(24px);
+  opacity: 0;
+  z-index: 1000;
+  pointer-events: none;
+  transition: opacity 400ms ease, transform 400ms ease;
+}
+.notify.is-open{
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+.notify-card{
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--graphite);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  max-width: calc(100vw - 40px);
+}
+.notify-icon{
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--hairline);
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+}
+.notify-icon svg{ animation: notify-shake 0.8s ease-in-out infinite; }
+@keyframes notify-shake{
+  0%, 100%{ transform: rotate(0); }
+  25%{ transform: rotate(-14deg); }
+  75%{ transform: rotate(14deg); }
+}
+.notify-body h3{
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 17px;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.notify-body p{
+  color: var(--silver);
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 4px 0 0;
+}
+.notify-cta{
+  margin-top: 12px;
+  background: var(--gold);
+  color: var(--black);
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 600;
+}
+.notify-close{
+  align-self: flex-start;
+  background: none;
+  border: 0;
+  color: var(--silver);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0 0 4px;
+}
+
+/* ---------- Celebration ---------- */
+.celebration{
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(8,8,8,0.86);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 400ms ease;
+}
+.celebration.is-open{
+  opacity: 1;
+  pointer-events: auto;
+}
+.celebration-card{
+  position: relative;
+  text-align: center;
+  border: 1px solid var(--gold);
+  background: var(--black);
+  border-radius: 18px;
+  padding: 48px 40px 56px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 30px 100px rgba(0,0,0,0.6);
+}
+.celebration-title{
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2rem, 6vw, 3rem);
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+  margin: 0;
+}
+.celebration-title .accent{ color: var(--gold); }
+.celebration-text{
+  color: var(--silver);
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 12px 0 0;
+}
+.celebrate-close{
+  margin-top: 28px;
+  background: none;
+  border: 1px solid var(--hairline);
+  color: var(--silver);
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* ---------- Confetti ---------- */
+.confetti{
+  position: fixed;
+  inset: 0;
+  z-index: 1090;
+  overflow: hidden;
+  pointer-events: none;
+}
+.confetti-piece{
+  position: absolute;
+  top: -20px;
+  border-radius: 2px;
+  animation-name: confetti-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+@keyframes confetti-fall{
+  0%{ transform: translateY(-20px) rotate(0deg); }
+  100%{ transform: translateY(110vh) rotate(720deg); }
+}
+@media (prefers-reduced-motion: reduce){
+  .notify-icon svg,
+  .confetti-piece{ animation: none; }
+}
+
 /* ---------- Footer ---------- */
 .footer{
   max-width: 56rem;
@@ -336,6 +500,34 @@ img{ max-width: 100%; display: block; }
     <span>© 2026 Sujith Suriya</span>
     <span>Shot · Cut · Kept</span>
   </footer>
+
+  <!-- SHAKE NOTIFICATION -->
+  <div class="notify" id="notify" role="dialog" aria-label="Shake your phone" aria-live="polite" hidden>
+    <div class="notify-card">
+      <span class="notify-icon" aria-hidden="true">
+        <svg width="22" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="7" y="2" width="10" height="20" rx="2"></rect>
+          <line x1="10" y1="19" x2="14" y2="19"></line>
+        </svg>
+      </span>
+      <div class="notify-body">
+        <h3>Shake your phone</h3>
+        <p>Give it a quick shake to unlock a surprise.</p>
+        <button class="notify-cta" id="notify-cta" type="button" hidden>Shake it here</button>
+      </div>
+      <button class="notify-close" id="notify-close" type="button" aria-label="Close notification">&times;</button>
+    </div>
+  </div>
+
+  <!-- CELEBRATION -->
+  <div class="celebration" id="celebration" role="dialog" aria-modal="true" aria-label="Congratulations" hidden>
+    <div class="confetti" id="confetti" aria-hidden="true"></div>
+    <div class="celebration-card">
+      <h3 class="celebration-title">Congratulations<span class="accent">!</span></h3>
+      <p class="celebration-text">You've unlocked an exclusive offer — enjoy <strong class="accent">20% off</strong> on your next project.</p>
+      <button class="celebrate-close" id="celebrate-close" type="button">Close</button>
+    </div>
+  </div>
 
   <script>
   (function(){
@@ -561,6 +753,109 @@ img{ max-width: 100%; display: block; }
       index = nearest;
     }, { passive: true });
     start();
+  })();
+
+  (function(){
+    var notify = document.getElementById("notify");
+    var cta = document.getElementById("notify-cta");
+    var closeBtn = document.getElementById("notify-close");
+    var celebration = document.getElementById("celebration");
+    var confetti = document.getElementById("confetti");
+    var celebrateClose = document.getElementById("celebrate-close");
+    if (!notify || !celebration) return;
+
+    var triggered = false;
+    var motionSeen = false;
+    var lastX = 0, lastY = 0, lastZ = 0, lastT = 0;
+
+    function hide(el){
+      el.classList.remove("is-open");
+      setTimeout(function(){ el.hidden = true; }, 400);
+    }
+
+    function celebrate(){
+      if (triggered) return;
+      triggered = true;
+      hide(notify);
+      celebration.hidden = false;
+      requestAnimationFrame(function(){ celebration.classList.add("is-open"); });
+      fireConfetti();
+    }
+
+    function onMotion(e){
+      var a = e.accelerationIncludingGravity || e.acceleration || {};
+      var x = a.x || 0, y = a.y || 0, z = a.z || 0;
+      var now = Date.now();
+      if (!motionSeen){
+        lastX = x; lastY = y; lastZ = z; lastT = now;
+        motionSeen = true;
+        return;
+      }
+      var dt = now - lastT;
+      if (dt > 500){
+        lastX = x; lastY = y; lastZ = z; lastT = now;
+        return;
+      }
+      var speed = Math.abs(x - lastX) + Math.abs(y - lastY) + Math.abs(z - lastZ);
+      lastX = x; lastY = y; lastZ = z; lastT = now;
+      if (speed > 25) celebrate();
+    }
+
+    function showFallback(){
+      if (cta && !triggered) cta.hidden = false;
+    }
+
+    function setupShake(){
+      if (window.DeviceMotionEvent && typeof window.DeviceMotionEvent.requestPermission === "function"){
+        window.DeviceMotionEvent.requestPermission().then(function(state){
+          if (state === "granted"){
+            window.addEventListener("devicemotion", onMotion, false);
+          } else {
+            showFallback();
+          }
+        }).catch(showFallback);
+      } else if (window.DeviceMotionEvent){
+        window.addEventListener("devicemotion", onMotion, false);
+        setTimeout(function(){
+          if (!motionSeen) showFallback();
+        }, 2500);
+      } else {
+        showFallback();
+      }
+    }
+
+    cta.addEventListener("click", celebrate);
+    closeBtn.addEventListener("click", function(){ hide(notify); });
+    celebrateClose.addEventListener("click", function(){ hide(celebration); });
+
+    setTimeout(showNotify, 4000);
+
+    function showNotify(){
+      if (triggered) return;
+      notify.hidden = false;
+      requestAnimationFrame(function(){ notify.classList.add("is-open"); });
+      setupShake();
+      setTimeout(function(){
+        if (!triggered) showFallback();
+      }, 14000);
+    }
+
+    function fireConfetti(){
+      if (!confetti) return;
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var colors = ["#C9A25E", "#E8E3D8", "#FFFFFF", "#9A9A9A", "#6E5B33"];
+      for (var i = 0; i < 42; i++){
+        var piece = document.createElement("span");
+        piece.className = "confetti-piece";
+        piece.style.left = Math.random() * 100 + "%";
+        piece.style.background = colors[i % colors.length];
+        piece.style.animationDelay = (Math.random() * 1.5) + "s";
+        piece.style.animationDuration = (2.5 + Math.random() * 2.5) + "s";
+        piece.style.width = (6 + Math.random() * 6) + "px";
+        piece.style.height = (10 + Math.random() * 8) + "px";
+        confetti.appendChild(piece);
+      }
+    }
   })();
   </script>
 
