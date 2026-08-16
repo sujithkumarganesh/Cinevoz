@@ -103,25 +103,6 @@ img{ max-width: 100%; display: block; }
 }
 .section-copy strong{ color: var(--white); font-weight: 500; }
 
-/* ---------- Showcase ---------- */
-.showcase{
-  max-width: 80rem;
-  margin: 0 auto;
-  padding: 140px 24px 0;
-}
-.showcase-head{
-  max-width: 56rem;
-  margin: 0 auto;
-}
-.showcase-eyebrow{
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--hairline);
-}
-
 /* ---------- Category Collages ---------- */
 .category{
   max-width: 80rem;
@@ -163,34 +144,6 @@ img{ max-width: 100%; display: block; }
 .collage-tile--full{ grid-column: span 4; }
 .collage-tile--half{ grid-column: span 2; }
 .collage-tile--quarter{ grid-column: span 1; }
-.tile-btn{
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  border: 0;
-  padding: 0;
-  background: rgba(11,11,11,0.25);
-  color: var(--white);
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 300ms ease;
-}
-.tile-btn:focus-visible{ opacity: 1; }
-.tile-play{
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.5);
-  background: rgba(11,11,11,0.55);
-  color: var(--white);
-  display: grid;
-  place-items: center;
-  backdrop-filter: blur(2px);
-  transition: transform 280ms ease;
-}
-.collage-tile:hover .tile-play,
-.tile-btn:focus-visible .tile-play{ transform: scale(1.08); }
 .tile-caption{
   position: absolute;
   left: 12px;
@@ -204,12 +157,6 @@ img{ max-width: 100%; display: block; }
   padding: 6px 10px;
   border-radius: 999px;
 }
-.collage-tile:hover .tile-btn,
-.collage-tile:focus-within .tile-btn{ opacity: 1; }
-@media (hover: none){
-  .tile-btn{ opacity: 1; background: rgba(11,11,11,0.2); }
-}
-
 /* ---------- Shot List ---------- */
 .shot-eyebrow{
   display: flex;
@@ -312,8 +259,6 @@ img{ max-width: 100%; display: block; }
 }
 @media (prefers-reduced-motion: reduce){
   html{ scroll-behavior: auto; }
-  .tile-btn,
-  .tile-play,
   .shot-row *{ transition-duration: 0.01ms !important; }
   .shot-row:hover .shot-name{ transform: none; }
 }
@@ -336,37 +281,6 @@ img{ max-width: 100%; display: block; }
   </header>
 
   <main>
-
-    <!-- SHOWCASE -->
-    <section class="showcase" aria-labelledby="showcase-title">
-      <div class="showcase-head">
-        <div class="showcase-eyebrow">
-          <span class="eyebrow">Selected Work</span>
-          <span class="eyebrow">Portfolio — 2026</span>
-        </div>
-        <h2 id="showcase-title" class="section-title">The Showcase</h2>
-        <p class="section-copy">
-          A cut of recent jobs, grouped by the kind of shoot they came from.
-          Every piece plays right here — press play, don't go anywhere.
-        </p>
-      </div>
-    </section>
-
-    <!-- CATEGORY COLLAGES (built by JS) -->
-    <div id="categories"></div>
-
-    <!-- ABOUT -->
-    <section class="section" aria-labelledby="about-title">
-      <p class="eyebrow">About</p>
-      <h2 id="about-title" class="section-title">The frame is half the story. The cut is the rest.</h2>
-      <p class="section-copy">
-        I'm Sujith Suriya, a creative director and storyteller who works a job
-        end-to-end — from the first location scout to the final grade.
-        I've shot sangeets at full volume and stills at whisper level, and
-        the one thing I've learned is that <strong>every frame has a job</strong>.
-        Mine is making sure it does it.
-      </p>
-    </section>
 
     <!-- SOCIAL MEDIA -->
     <section class="section" aria-labelledby="social-media-title">
@@ -397,6 +311,58 @@ img{ max-width: 100%; display: block; }
           <p class="shot-desc">Timing content to what's working now, not what worked last month.</p>
         </li>
       </ul>
+    </section>
+
+    <!-- WHAT I DO -->
+    <section class="section" aria-labelledby="what-i-do-title">
+      <div class="shot-eyebrow">
+        <span class="eyebrow">Services</span>
+        <span class="eyebrow">One crew, end to end</span>
+      </div>
+      <h2 id="what-i-do-title" class="section-title">What I Do</h2>
+      <p class="section-copy">
+        Every job gets the same treatment — directed, shot, and cut so the
+        frame works as hard as the story it's telling.
+      </p>
+
+      <ul class="shot-list" role="list">
+        <li class="shot-row">
+          <span class="shot-format">01 — Direction</span>
+          <h3 class="shot-name">Creative Direction</h3>
+          <p class="shot-desc">Concept, framing and tone — locked before a single frame is shot.</p>
+        </li>
+        <li class="shot-row">
+          <span class="shot-format">02 — Camera</span>
+          <h3 class="shot-name">Shooting</h3>
+          <p class="shot-desc">Cinematic and event coverage, shot live and lit to sell the moment.</p>
+        </li>
+        <li class="shot-row">
+          <span class="shot-format">03 — Edit</span>
+          <h3 class="shot-name">Editing &amp; Post</h3>
+          <p class="shot-desc">The cut, the grade, the sound — every format cut to its platform's rhythm.</p>
+        </li>
+        <li class="shot-row">
+          <span class="shot-format">04 — Feed</span>
+          <h3 class="shot-name">Social Content</h3>
+          <p class="shot-desc">Reels and vertical spots built to stop the scroll, end to end.</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- CATEGORY COLLAGES (built by JS) -->
+    <div id="categories"></div>
+
+    <!-- ABOUT -->
+    <section class="section" aria-labelledby="about-title">
+      <p class="eyebrow">About</p>
+      <h2 id="about-title" class="section-title">The frame is half the story. The cut is the rest.</h2>
+      <p class="section-copy">
+        I'm Sujith Suriya, a creative director and storyteller who works a job
+        end-to-end — from the first location scout to the final grade.
+        I've shot sangeets at full volume and stills at whisper level, and
+        the one thing I've learned is that <strong>every frame has a job</strong>.
+        Mine is making sure it does it.
+      </p>
     </section>
 
   </main>
@@ -483,9 +449,6 @@ img{ max-width: 100%; display: block; }
       return ["half", "quarter", "quarter", "half", "half"];
     }
 
-    var PLAY_ICON =
-      '<svg width="22" height="26" viewBox="0 0 22 26" fill="currentColor" aria-hidden="true"><path d="M0 0 L22 13 L0 26 Z"/></svg>';
-
     var host = document.getElementById("categories");
     var fragment = document.createDocumentFragment();
 
@@ -539,31 +502,13 @@ img{ max-width: 100%; display: block; }
           v.preload = "metadata";
           tile.appendChild(v);
 
-          var btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "tile-btn";
-          btn.setAttribute("aria-label", "Play " + cat.eyebrow + (item.label ? " — " + item.label : ""));
-          btn.innerHTML = '<span class="tile-play">' + PLAY_ICON + "</span>";
-          tile.appendChild(btn);
-
-          (function(video, button, tileEl){
-            var live = false;
+          (function(video, tileEl){
             function startPreview(){
-              if (live) return;
               try{ video.currentTime = 0; video.play(); }catch(e){}
             }
             function stopPreview(){
-              if (!live) video.currentTime = 0;
-              try{ video.pause(); }catch(e){}
+              try{ video.currentTime = 0; video.pause(); }catch(e){}
             }
-            button.addEventListener("click", function(){
-              if (live) return;
-              live = true;
-              button.hidden = true;
-              video.muted = false;
-              video.controls = true;
-              video.play();
-            });
             video.addEventListener("loadedmetadata", function(){
               if (video.videoWidth && video.videoHeight){
                 video.style.aspectRatio = video.videoWidth + " / " + video.videoHeight;
@@ -578,7 +523,7 @@ img{ max-width: 100%; display: block; }
               }, { threshold: 0.15 });
               io.observe(tileEl);
             }
-          })(v, btn, tile);
+          })(v, tile);
         }
 
         if (item.label){
