@@ -52,47 +52,33 @@ img{ max-width: 100%; display: block; }
   padding-bottom: 16px;
   border-bottom: 1px solid var(--hairline);
 }
-.hero-visual-wrap{
-  margin: 48px auto 0;
-  max-width: 420px;
-  animation: hero-rise 1s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: 0.2s;
+.hero-title{
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(3rem, 10vw, 6.5rem);
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  margin: 48px 0 0;
 }
-.hero-visual{
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 14px;
-  border: 1px solid var(--hairline);
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
-  animation: hero-float 5.5s ease-in-out 1.3s infinite;
+.hero-sub{
+  color: var(--silver);
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 36rem;
+  margin: 24px 0 0;
 }
 @keyframes hero-rise{
   from{ opacity: 0; transform: translateY(28px) scale(1.05); }
   to{ opacity: 1; transform: none; }
 }
-@keyframes hero-float{
-  0%, 100%{ transform: translateY(0); }
-  50%{ transform: translateY(-10px); }
-}
 .hero-eyebrow,
+.hero-title,
 .hero-sub{
   animation: hero-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .hero-eyebrow{ animation-delay: 0.05s; }
-.hero-sub{
-  margin: 24px auto 0;
-  text-align: center;
-  animation-delay: 0.4s;
-}
-.sr-only{
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
+.hero-title{ animation-delay: 0.2s; }
+.hero-sub{ animation-delay: 0.4s; }
 
 /* ---------- Sections ---------- */
 .section{
@@ -242,9 +228,8 @@ img{ max-width: 100%; display: block; }
 @media (prefers-reduced-motion: reduce){
   .reveal{ opacity: 1; transform: none; transition: none; }
   .hero-eyebrow,
-  .hero-sub,
-  .hero-visual,
-  .hero-visual-wrap{ animation: none; }
+  .hero-title,
+  .hero-sub{ animation: none; }
 }
 
 /* ---------- Footer ---------- */
@@ -269,7 +254,6 @@ img{ max-width: 100%; display: block; }
   .collage-tile--full{ grid-column: span 2; }
   .collage-tile--half{ grid-column: span 2; }
   .collage-tile--quarter{ grid-column: span 1; }
-  .hero-visual-wrap{ max-width: 300px; }
 }
 @media (max-width: 479px){
   .wslider{ grid-auto-columns: 80vw; }
@@ -283,14 +267,11 @@ img{ max-width: 100%; display: block; }
 
   <!-- HERO -->
   <header class="hero">
-    <h1 class="sr-only">Sujith Suriya</h1>
     <div class="hero-eyebrow">
       <span class="eyebrow">Creative Director &amp; Storyteller</span>
       <span class="eyebrow">India</span>
     </div>
-    <div class="hero-visual-wrap">
-      <img class="hero-visual" src="IMG_SEGMENT_20260816_151447.png" alt="Sujith Suriya — portrait" width="1220" height="2250" />
-    </div>
+    <h1 class="hero-title">Sujith Suriya</h1>
     <p class="hero-sub">
       I shoot it, I cut it, I make it move online. Weddings, events,
       product films, and the social content that gets them seen —
