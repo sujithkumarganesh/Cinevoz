@@ -824,13 +824,27 @@ img{ max-width: 100%; display: block; }
       var touchY = 0;
       var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+      function warm(i){
+        var s = slides[(i + count) % count];
+        if (!s) return;
+        var v = s.item.mediaEl;
+        if (!v || v.readyState >= 2) return;
+        try{
+          v.preload = "auto";
+          v.load();
+          var p = v.play();
+          if (p && p.catch) p.catch(function(){});
+        }catch(e){}
+      }
+
       function playAt(i){
         var next = (i + count) % count;
+        warm(next);
         slides.forEach(function(s, j){
           var v = s.item.mediaEl;
           if (!v) return;
           try{
-            if (j === next){ if (v.paused || v.ended) v.play(); }
+            if (j === next){ var p = v.play(); if (p && p.catch) p.catch(function(){}); }
             else { v.pause(); }
           }catch(e){}
         });
@@ -841,7 +855,10 @@ img{ max-width: 100%; display: block; }
 
       function start(){
         if (reduced || timer) return;
-        timer = setInterval(function(){ playAt(index + 1); }, 4200);
+        timer = setInterval(function(){
+          playAt(index + 1);
+          setTimeout(function(){ warm(index + 1); }, 2400);
+        }, 4200);
       }
       function stop(){
         clearInterval(timer);
@@ -886,10 +903,6 @@ img{ max-width: 100%; display: block; }
         slide.appendChild(buildTile(cat, item));
         track.appendChild(slide);
         slides.push({ slide: slide, item: item });
-        if (item.mediaEl){
-          item.mediaEl.preload = "auto";
-          item.mediaEl.load();
-        }
         var b = document.createElement("button");
         b.type = "button";
         b.setAttribute("aria-label", "Go to slide " + slides.length);
