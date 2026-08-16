@@ -157,7 +157,7 @@ img{ max-width: 100%; display: block; }
   padding: 6px 10px;
   border-radius: 999px;
 }
-/* ---------- Shot List ---------- */
+/* ---------- Section Head ---------- */
 .shot-eyebrow{
   display: flex;
   align-items: baseline;
@@ -166,40 +166,53 @@ img{ max-width: 100%; display: block; }
   padding-bottom: 16px;
   border-bottom: 1px solid var(--hairline);
 }
-.shot-list{
-  margin: 56px 0 0;
-  padding: 0;
-  list-style: none;
-}
-.shot-row{
+
+/* ---------- What I Do Slider ---------- */
+.what-i-do{ padding-top: 96px; }
+.wslider{
+  margin: 36px 0 0;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 6px;
-  padding: 22px 0;
-  border-top: 1px solid var(--hairline);
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(240px, 300px);
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+  padding-bottom: 6px;
 }
-.shot-format{
-  color: var(--silver);
-  font-size: 12px;
-  letter-spacing: 0.16em;
+.wslider::-webkit-scrollbar{ height: 6px; }
+.wslider::-webkit-scrollbar-thumb{ background: var(--hairline); border-radius: 999px; }
+.wslider::-webkit-scrollbar-track{ background: transparent; }
+.wcard{
+  scroll-snap-align: start;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.wcard-num{
+  font-size: 11px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  transition: color 280ms ease;
+  color: var(--silver);
 }
-.shot-name{
+.wcard-title{
   font-family: var(--display);
   font-weight: 400;
-  font-size: clamp(1.75rem, 4.5vw, 2.5rem);
-  line-height: 1.1;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
   margin: 0;
-  transition: transform 280ms ease;
 }
-.shot-desc{
+.wcard-desc{
   color: var(--silver);
-  font-size: 14px;
+  font-size: 13.5px;
   line-height: 1.65;
   margin: 0;
-  max-width: 44ch;
-  transition: color 280ms ease;
 }
 
 /* ---------- Scroll Reveal ---------- */
@@ -242,25 +255,11 @@ img{ max-width: 100%; display: block; }
   .collage-tile--half{ grid-column: span 2; }
   .collage-tile--quarter{ grid-column: span 1; }
 }
-@media (min-width: 768px){
-  .shot-row{
-    grid-template-columns: 220px minmax(0, 1fr) minmax(0, 1.05fr);
-    align-items: baseline;
-    gap: 32px;
-    padding: 34px 0;
-  }
-  .shot-format{ font-size: 12.5px; }
-  .shot-desc{ font-size: 15px; max-width: 38ch; }
-}
-@media (hover: hover) and (pointer: fine){
-  .shot-row:hover .shot-format,
-  .shot-row:hover .shot-desc{ color: var(--white); }
-  .shot-row:hover .shot-name{ transform: translateX(14px); }
+@media (max-width: 479px){
+  .wslider{ grid-auto-columns: 80vw; }
 }
 @media (prefers-reduced-motion: reduce){
   html{ scroll-behavior: auto; }
-  .shot-row *{ transition-duration: 0.01ms !important; }
-  .shot-row:hover .shot-name{ transform: none; }
 }
 </style>
 </head>
@@ -282,71 +281,36 @@ img{ max-width: 100%; display: block; }
 
   <main>
 
-    <!-- SOCIAL MEDIA -->
-    <section class="section" aria-labelledby="social-media-title">
-      <div class="shot-eyebrow">
-        <span class="eyebrow">Beyond the Frame</span>
-        <span class="eyebrow">Department — Strategy + Production</span>
-      </div>
-      <h2 id="social-media-title" class="section-title">Social Media, A to Z</h2>
-      <p class="section-copy">
-        Every frame I shoot is built to live somewhere — a feed, a reel, a
-        story. I handle the full pipeline, from the first idea to the final post.
-      </p>
-
-      <ul class="shot-list" role="list">
-        <li class="shot-row">
-          <span class="shot-format">Strategy</span>
-          <h3 class="shot-name">Ideation &amp; Scripting</h3>
-          <p class="shot-desc">Content built to stop the scroll, not just fill a calendar.</p>
-        </li>
-        <li class="shot-row">
-          <span class="shot-format">Production</span>
-          <h3 class="shot-name">Shooting &amp; Editing</h3>
-          <p class="shot-desc">The same craft behind every wedding film, sized for Reels and Shorts.</p>
-        </li>
-        <li class="shot-row">
-          <span class="shot-format">Research</span>
-          <h3 class="shot-name">Hook &amp; Trend Research</h3>
-          <p class="shot-desc">Timing content to what's working now, not what worked last month.</p>
-        </li>
-      </ul>
-    </section>
-
     <!-- WHAT I DO -->
-    <section class="section" aria-labelledby="what-i-do-title">
+    <section class="section what-i-do" aria-labelledby="what-i-do-title">
       <div class="shot-eyebrow">
         <span class="eyebrow">Services</span>
         <span class="eyebrow">One crew, end to end</span>
       </div>
       <h2 id="what-i-do-title" class="section-title">What I Do</h2>
-      <p class="section-copy">
-        Every job gets the same treatment — directed, shot, and cut so the
-        frame works as hard as the story it's telling.
-      </p>
 
-      <ul class="shot-list" role="list">
-        <li class="shot-row">
-          <span class="shot-format">01 — Direction</span>
-          <h3 class="shot-name">Creative Direction</h3>
-          <p class="shot-desc">Concept, framing and tone — locked before a single frame is shot.</p>
-        </li>
-        <li class="shot-row">
-          <span class="shot-format">02 — Camera</span>
-          <h3 class="shot-name">Shooting</h3>
-          <p class="shot-desc">Cinematic and event coverage, shot live and lit to sell the moment.</p>
-        </li>
-        <li class="shot-row">
-          <span class="shot-format">03 — Edit</span>
-          <h3 class="shot-name">Editing &amp; Post</h3>
-          <p class="shot-desc">The cut, the grade, the sound — every format cut to its platform's rhythm.</p>
-        </li>
-        <li class="shot-row">
-          <span class="shot-format">04 — Feed</span>
-          <h3 class="shot-name">Social Content</h3>
-          <p class="shot-desc">Reels and vertical spots built to stop the scroll, end to end.</p>
-        </li>
-      </ul>
+      <div class="wslider" role="list">
+        <article class="wcard" role="listitem">
+          <span class="wcard-num">01</span>
+          <h3 class="wcard-title">Creative Direction</h3>
+          <p class="wcard-desc">Concept, framing and tone — locked before a single frame is shot.</p>
+        </article>
+        <article class="wcard" role="listitem">
+          <span class="wcard-num">02</span>
+          <h3 class="wcard-title">Shooting</h3>
+          <p class="wcard-desc">Cinematic and event coverage, shot live and lit to sell the moment.</p>
+        </article>
+        <article class="wcard" role="listitem">
+          <span class="wcard-num">03</span>
+          <h3 class="wcard-title">Editing &amp; Post</h3>
+          <p class="wcard-desc">The cut, the grade, the sound — every format cut to its platform's rhythm.</p>
+        </article>
+        <article class="wcard" role="listitem">
+          <span class="wcard-num">04</span>
+          <h3 class="wcard-title">Social Content</h3>
+          <p class="wcard-desc">Reels and vertical spots built to stop the scroll, end to end.</p>
+        </article>
+      </div>
     </section>
 
     <!-- CATEGORY COLLAGES (built by JS) -->
@@ -546,11 +510,11 @@ img{ max-width: 100%; display: block; }
 
   (function(){
     var prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var rows = document.querySelectorAll(".shot-row, .collage-tile");
-    if (prefersReduced || !("IntersectionObserver" in window) || !rows.length) return;
-    rows.forEach(function(row, i){
-      row.classList.add("reveal");
-      row.style.transitionDelay = Math.min(i % 6, 5) * 60 + "ms";
+    var tiles = document.querySelectorAll(".collage-tile");
+    if (prefersReduced || !("IntersectionObserver" in window) || !tiles.length) return;
+    tiles.forEach(function(tile, i){
+      tile.classList.add("reveal");
+      tile.style.transitionDelay = Math.min(i % 6, 5) * 60 + "ms";
     });
     var io = new IntersectionObserver(function(entries){
       entries.forEach(function(entry){
@@ -560,7 +524,43 @@ img{ max-width: 100%; display: block; }
         }
       });
     }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
-    rows.forEach(function(row){ io.observe(row); });
+    tiles.forEach(function(tile){ io.observe(tile); });
+  })();
+
+  (function(){
+    var track = document.querySelector(".wslider");
+    if (!track || track.children.length < 2) return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var cards = Array.prototype.slice.call(track.children);
+    var index = 0;
+    var timer = null;
+    function go(i){
+      index = (i + cards.length) % cards.length;
+      var target = track.scrollLeft + (cards[index].getBoundingClientRect().left - track.getBoundingClientRect().left);
+      track.scrollTo({ left: target, behavior: "smooth" });
+    }
+    function start(){
+      if (timer) return;
+      timer = setInterval(function(){ go(index + 1); }, 3200);
+    }
+    function stop(){
+      clearInterval(timer);
+      timer = null;
+    }
+    track.addEventListener("mouseenter", stop);
+    track.addEventListener("mouseleave", start);
+    track.addEventListener("touchstart", stop, { passive: true });
+    track.addEventListener("scroll", function(){
+      var center = track.scrollLeft + track.clientWidth / 2;
+      var nearest = 0;
+      var best = Infinity;
+      cards.forEach(function(card, i){
+        var d = Math.abs(card.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft + card.offsetWidth / 2 - center);
+        if (d < best){ best = d; nearest = i; }
+      });
+      index = nearest;
+    }, { passive: true });
+    start();
   })();
   </script>
 
