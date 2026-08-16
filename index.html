@@ -124,29 +124,33 @@ img{ max-width: 100%; display: block; }
   margin: 48px 0 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: 190px;
   grid-auto-flow: dense;
+  align-items: start;
   gap: 12px;
 }
 .collage-tile{
   position: relative;
   overflow: hidden;
   border-radius: 4px;
-  background: var(--graphite);
+  background: var(--black);
+  border: 1px solid var(--hairline);
   min-width: 0;
 }
-.collage-tile video,
 .collage-tile img{
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
   display: block;
 }
-.collage-tile--full{ grid-column: span 4; grid-row: span 2; }
-.collage-tile--big{ grid-column: span 2; grid-row: span 2; }
-.collage-tile--tall{ grid-column: span 1; grid-row: span 2; }
-.collage-tile--wide{ grid-column: span 2; grid-row: span 1; }
-.collage-tile--wide-full{ grid-column: span 4; grid-row: span 1; }
+.collage-tile video{
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  aspect-ratio: 16 / 9;
+}
+.collage-tile--full{ grid-column: span 4; }
+.collage-tile--half{ grid-column: span 2; }
+.collage-tile--quarter{ grid-column: span 1; }
 .tile-btn{
   position: absolute;
   inset: 0;
@@ -271,15 +275,10 @@ img{ max-width: 100%; display: block; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 639px){
-  .collage{
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: 130px;
-  }
-  .collage-tile--full{ grid-column: span 2; grid-row: span 2; }
-  .collage-tile--big{ grid-column: span 2; grid-row: span 1; }
-  .collage-tile--tall{ grid-column: span 1; grid-row: span 2; }
-  .collage-tile--wide{ grid-column: span 2; grid-row: span 1; }
-  .collage-tile--wide-full{ grid-column: span 2; grid-row: span 1; }
+  .collage{ grid-template-columns: repeat(2, 1fr); }
+  .collage-tile--full{ grid-column: span 2; }
+  .collage-tile--half{ grid-column: span 2; }
+  .collage-tile--quarter{ grid-column: span 1; }
 }
 @media (min-width: 768px){
   .shot-row{
@@ -554,10 +553,10 @@ img{ max-width: 100%; display: block; }
 
     function collageLayout(count){
       if (count === 1) return ["full"];
-      if (count === 2) return ["big", "big"];
-      if (count === 3) return ["big", "tall", "tall"];
-      if (count === 4) return ["big", "tall", "tall", "wide-full"];
-      return ["big", "tall", "tall", "wide", "wide"];
+      if (count === 2) return ["half", "half"];
+      if (count === 3) return ["half", "quarter", "quarter"];
+      if (count === 4) return ["half", "half", "half", "half"];
+      return ["half", "quarter", "quarter", "half", "half"];
     }
 
     var PLAY_ICON =
@@ -625,16 +624,14 @@ img{ max-width: 100%; display: block; }
 
           (function(video, button, tileEl){
             var live = false;
-            function preview(){
+            function startPreview(){
               if (live) return;
               try{ video.currentTime = 0; video.play(); }catch(e){}
             }
             function stopPreview(){
-              if (live) return;
-              try{ video.pause(); video.currentTime = 0; }catch(e){}
+              if (!live) video.currentTime = 0;
+              try{ video.pause(); }catch(e){}
             }
-            tileEl.addEventListener("mouseenter", preview);
-            tileEl.addEventListener("mouseleave", stopPreview);
             button.addEventListener("click", function(){
               if (live) return;
               live = true;
@@ -643,6 +640,20 @@ img{ max-width: 100%; display: block; }
               video.controls = true;
               video.play();
             });
+            video.addEventListener("loadedmetadata", function(){
+              if (video.videoWidth && video.videoHeight){
+                video.style.aspectRatio = video.videoWidth + " / " + video.videoHeight;
+              }
+            });
+            if ("IntersectionObserver" in window){
+              var io = new IntersectionObserver(function(entries){
+                entries.forEach(function(entry){
+                  if (entry.isIntersecting) startPreview();
+                  else stopPreview();
+                });
+              }, { threshold: 0.15 });
+              io.observe(tileEl);
+            }
           })(v, btn, tile);
         }
 
