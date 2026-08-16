@@ -91,6 +91,125 @@ img{ max-width: 100%; display: block; }
 }
 .section-copy strong{ color: var(--white); font-weight: 500; }
 
+/* ---------- Showcase ---------- */
+.showcase{
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 140px 24px 0;
+}
+.showcase-head{
+  max-width: 56rem;
+  margin: 0 auto;
+}
+.showcase-eyebrow{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--hairline);
+}
+.showcase-grid{
+  list-style: none;
+  margin: 64px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px 28px;
+}
+.showcase-card{
+  display: block;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+.showcase-card:focus-visible{
+  outline: 1px solid var(--white);
+  outline-offset: 6px;
+}
+.showcase-media{
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--graphite);
+}
+.showcase-media video,
+.showcase-media img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.showcase-overlay{
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(11,11,11,0.35);
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.showcase-play{
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.5);
+  background: rgba(11,11,11,0.55);
+  color: var(--white);
+  display: grid;
+  place-items: center;
+  backdrop-filter: blur(2px);
+  transition: transform 280ms ease;
+}
+.showcase-card:hover .showcase-play,
+.showcase-card:focus-visible .showcase-play{ transform: scale(1.08); }
+.showcase-hint{
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--white);
+  background: rgba(11,11,11,0.6);
+  padding: 6px 10px;
+  border-radius: 999px;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.showcase-card:hover .showcase-overlay,
+.showcase-card:focus-visible .showcase-overlay,
+.showcase-card:hover .showcase-hint,
+.showcase-card:focus-visible .showcase-hint{ opacity: 1; }
+.showcase-meta{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 2px 0;
+}
+.showcase-name{
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 1.35rem;
+  line-height: 1.1;
+  margin: 0;
+}
+.showcase-format{
+  color: var(--silver);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.showcase-desc{
+  color: var(--silver);
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin: 6px 0 0;
+}
+
 /* ---------- Shot List ---------- */
 .shot-eyebrow{
   display: flex;
@@ -136,6 +255,84 @@ img{ max-width: 100%; display: block; }
   transition: color 280ms ease;
 }
 
+/* ---------- Modal ---------- */
+.modal{
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.modal[hidden]{ display: none; }
+.modal-backdrop{
+  position: absolute;
+  inset: 0;
+  background: rgba(11,11,11,0.92);
+}
+.modal-content{
+  position: relative;
+  width: min(64rem, 100%);
+  max-height: 90vh;
+  background: var(--graphite);
+  border: 1px solid var(--hairline);
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.modal-media{
+  background: #000;
+  aspect-ratio: 16 / 9;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.modal-media video,
+.modal-media img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.modal-bar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+}
+.modal-caption{
+  font-family: var(--display);
+  font-size: 1rem;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.modal-actions{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modal-close,
+.modal-nav{
+  border: 1px solid var(--hairline);
+  background: none;
+  color: var(--white);
+  cursor: pointer;
+  font-family: var(--utility);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border-radius: 999px;
+}
+.modal-nav:hover,
+.modal-close:hover,
+.modal-nav:focus-visible,
+.modal-close:focus-visible{ color: var(--silver); }
+body.modal-open{ overflow: hidden; }
+
 /* ---------- Footer ---------- */
 .footer{
   max-width: 56rem;
@@ -153,6 +350,12 @@ img{ max-width: 100%; display: block; }
 }
 
 /* ---------- Responsive ---------- */
+@media (min-width: 640px){
+  .showcase-grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1080px){
+  .showcase-grid{ grid-template-columns: repeat(3, 1fr); }
+}
 @media (min-width: 768px){
   .shot-row{
     grid-template-columns: 220px minmax(0, 1fr) minmax(0, 1.05fr);
@@ -163,6 +366,10 @@ img{ max-width: 100%; display: block; }
   .shot-format{ font-size: 12.5px; }
   .shot-desc{ font-size: 15px; max-width: 38ch; }
 }
+@media (hover: none){
+  .showcase-overlay{ opacity: 1; background: rgba(11,11,11,0.2); }
+  .showcase-hint{ opacity: 1; }
+}
 @media (hover: hover) and (pointer: fine){
   .shot-row:hover .shot-format,
   .shot-row:hover .shot-desc{ color: var(--white); }
@@ -170,6 +377,9 @@ img{ max-width: 100%; display: block; }
 }
 @media (prefers-reduced-motion: reduce){
   html{ scroll-behavior: auto; }
+  .showcase-overlay,
+  .showcase-hint,
+  .showcase-play,
   .shot-row *{ transition-duration: 0.01ms !important; }
   .shot-row:hover .shot-name{ transform: none; }
 }
@@ -192,6 +402,23 @@ img{ max-width: 100%; display: block; }
   </header>
 
   <main>
+
+    <!-- SHOWCASE -->
+    <section class="showcase" aria-labelledby="showcase-title">
+      <div class="showcase-head">
+        <div class="showcase-eyebrow">
+          <span class="eyebrow">Selected Work</span>
+          <span class="eyebrow">Portfolio — 2026</span>
+        </div>
+        <h2 id="showcase-title" class="section-title">The Showcase</h2>
+        <p class="section-copy">
+          A cut of recent jobs — hover to preview, click to watch in full.
+          Commercials, music videos, events and the quieter shoots in between.
+        </p>
+      </div>
+
+      <ul id="showcase-grid" class="showcase-grid" role="list"></ul>
+    </section>
 
     <!-- ABOUT -->
     <section class="section" aria-labelledby="about-title">
@@ -260,6 +487,300 @@ img{ max-width: 100%; display: block; }
     <span>© 2026 Sujith Suriya</span>
     <span>Shot · Cut · Kept</span>
   </footer>
+
+  <!-- MODAL -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-label="Work preview" hidden>
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div id="modal-media" class="modal-media"></div>
+      <div class="modal-bar">
+        <p id="modal-caption" class="modal-caption"></p>
+        <div class="modal-actions">
+          <button id="modal-prev" class="modal-nav" type="button">Prev</button>
+          <button id="modal-next" class="modal-nav" type="button">Next</button>
+          <button id="modal-close" class="modal-close" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    "use strict";
+
+    var BASE = "new portfolio/";
+    function enc(p){ return encodeURI(p); }
+
+    var SHOWCASE = [
+      {
+        type: "photos",
+        label: "Wedding",
+        format: "2.39:1 · Cinematic",
+        desc: "The full day shot live, then cut into a story worth keeping for years.",
+        files: [
+          BASE + "wedding/DSC07228.JPG",
+          BASE + "wedding/DSC07235.JPG",
+          BASE + "wedding/DSC07276.JPG",
+          BASE + "wedding/DSC07324.JPG",
+          BASE + "wedding/DSC07384.JPG"
+        ]
+      },
+      {
+        type: "photos",
+        label: "Birthday Party",
+        format: "16:9 · Event",
+        desc: "Bright candids and honest reactions, framed and cut for the feed.",
+        files: [
+          BASE + "birthday party/DSC02396.JPG",
+          BASE + "birthday party/DSC02406.JPG",
+          BASE + "birthday party/DSC02453.JPG",
+          BASE + "birthday party/DSC02544.JPG",
+          BASE + "birthday party/DSC02766.JPG"
+        ]
+      },
+      {
+        type: "video",
+        label: "Cafes & Restaurant",
+        format: "16:9 · Brand Film",
+        desc: "A short brand film shot for a Goregaon café.",
+        src: BASE + "Cafes & Restuarant/Goregaon.mp4"
+      },
+      {
+        type: "video",
+        label: "Cinematic Commercial",
+        format: "2.39:1 · Commercial",
+        desc: "Coffee, slow and considered.",
+        src: BASE + "Cinematic Commercials/Coffee.mp4"
+      },
+      {
+        type: "video",
+        label: "Dance Event",
+        format: "16:9 · Event",
+        desc: "Full-volume energy, cut to the beat.",
+        src: BASE + "Dance Event/01.mp4"
+      },
+      {
+        type: "video",
+        label: "Jewellery Shoot — 01",
+        format: "4:5 · Studio",
+        desc: "Macro light on metal and stone.",
+        src: BASE + "jewellery Shoot/01.mp4"
+      },
+      {
+        type: "video",
+        label: "Jewellery Shoot — 02",
+        format: "4:5 · Studio",
+        desc: "Details that only exist under studio light.",
+        src: BASE + "jewellery Shoot/02.mp4"
+      },
+      {
+        type: "video",
+        label: "Jewellery Shoot — 03",
+        format: "4:5 · Studio",
+        desc: "Every facet, cut to catch the eye.",
+        src: BASE + "jewellery Shoot/03.mp4"
+      },
+      {
+        type: "video",
+        label: "Music Video",
+        format: "16:9 · Music",
+        desc: "Performance and atmosphere for the track.",
+        src: BASE + "Music Video/01.mp4"
+      },
+      {
+        type: "video",
+        label: "School Events",
+        format: "16:9 · Event",
+        desc: "The whole day, documented.",
+        src: BASE + "School Events/01.mp4"
+      },
+      {
+        type: "video",
+        label: "Short Film",
+        format: "2.39:1 · Narrative",
+        desc: "A quiet story told in frames.",
+        src: BASE + "Short film/01.mp4"
+      },
+      {
+        type: "video",
+        label: "Social Ad — Let's Meet",
+        format: "9:16 · Vertical",
+        desc: "A vertical spot built for the feed.",
+        src: BASE + "Social Media Ad campaign/Let's Meet .mp4"
+      },
+      {
+        type: "video",
+        label: "Social Ad — Skinny Chocolate",
+        format: "9:16 · Vertical",
+        desc: "Tight product frames for a quick sell.",
+        src: BASE + "Social Media Ad campaign/Skinny chocolate Revised.mp4"
+      },
+      {
+        type: "video",
+        label: "Social Ad — WhatsApp Cut",
+        format: "9:16 · Vertical",
+        desc: "A short vertical cut for chat sharing.",
+        src: BASE + "Social Media Ad campaign/WhatsApp Video 2026-08-16 at 1.24.47 PM.mp4"
+      }
+    ];
+
+    var grid = document.getElementById("showcase-grid");
+    var modal = document.getElementById("modal");
+    var modalMedia = document.getElementById("modal-media");
+    var modalCaption = document.getElementById("modal-caption");
+    var modalClose = document.getElementById("modal-close");
+    var modalPrev = document.getElementById("modal-prev");
+    var modalNext = document.getElementById("modal-next");
+    var lastFocus = null;
+    var gallery = null;
+    var gIndex = 0;
+
+    var PLAY_ICON =
+      '<svg width="22" height="26" viewBox="0 0 22 26" fill="currentColor" aria-hidden="true"><path d="M0 0 L22 13 L0 26 Z"/></svg>';
+    var PHOTO_ICON =
+      '<svg width="24" height="20" viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1" y="3" width="22" height="16" rx="2"/><circle cx="12" cy="11" r="4"/><path d="M6 3 L8 1 H16 L18 3"/></svg>';
+
+    function openModal(){
+      modal.hidden = false;
+      document.body.classList.add("modal-open");
+      modalClose.focus();
+    }
+
+    function closeModal(){
+      modal.hidden = true;
+      document.body.classList.remove("modal-open");
+      modalMedia.innerHTML = "";
+      gallery = null;
+      if (lastFocus) lastFocus.focus();
+    }
+
+    function showPhoto(){
+      var item = gallery;
+      var src = enc(item.files[gIndex]);
+      modalMedia.innerHTML =
+        '<img src="' + src + '" alt="' + item.label + ' photo ' + (gIndex + 1) + '" />';
+      modalCaption.textContent = item.label + " — " + (gIndex + 1) + " / " + item.files.length;
+      modalPrev.hidden = modalNext.hidden = item.files.length < 2;
+    }
+
+    function open(item){
+      lastFocus = document.activeElement;
+      if (item.type === "video"){
+        gallery = null;
+        modalMedia.innerHTML =
+          '<video src="' + enc(item.src) + '" controls autoplay playsinline></video>';
+        modalCaption.textContent = item.label;
+        modalPrev.hidden = modalNext.hidden = true;
+      } else {
+        gallery = item;
+        gIndex = 0;
+        showPhoto();
+      }
+      openModal();
+    }
+
+    function buildCard(item){
+      var li = document.createElement("li");
+      li.className = "showcase-card";
+      li.tabIndex = 0;
+
+      var media = document.createElement("div");
+      media.className = "showcase-media";
+
+      if (item.type === "video"){
+        var v = document.createElement("video");
+        v.src = enc(item.src);
+        v.muted = true;
+        v.loop = true;
+        v.playsInline = true;
+        v.preload = "metadata";
+        media.appendChild(v);
+      } else {
+        var img = document.createElement("img");
+        img.src = enc(item.files[0]);
+        img.alt = item.label;
+        img.loading = "lazy";
+        media.appendChild(img);
+      }
+
+      var overlay = document.createElement("div");
+      overlay.className = "showcase-overlay";
+      overlay.innerHTML =
+        '<span class="showcase-play" aria-hidden="true">' +
+        (item.type === "video" ? PLAY_ICON : PHOTO_ICON) +
+        "</span>";
+      media.appendChild(overlay);
+
+      var hint = document.createElement("span");
+      hint.className = "showcase-hint";
+      hint.textContent = item.type === "video" ? "Hover to preview" : "View gallery";
+      media.appendChild(hint);
+
+      li.appendChild(media);
+
+      var meta = document.createElement("div");
+      meta.className = "showcase-meta";
+      meta.innerHTML =
+        '<h3 class="showcase-name"></h3><span class="showcase-format"></span>';
+      meta.querySelector(".showcase-name").textContent = item.label;
+      meta.querySelector(".showcase-format").textContent = item.format;
+      li.appendChild(meta);
+
+      var desc = document.createElement("p");
+      desc.className = "showcase-desc";
+      desc.textContent = item.desc;
+      li.appendChild(desc);
+
+      if (item.type === "video"){
+        media.addEventListener("mouseenter", function(){
+          try{ v.currentTime = 0; v.play(); }catch(e){}
+        });
+        media.addEventListener("mouseleave", function(){
+          try{ v.pause(); v.currentTime = 0; }catch(e){}
+        });
+      }
+
+      li.addEventListener("click", function(){ open(item); });
+      li.addEventListener("keydown", function(e){
+        if (e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          open(item);
+        }
+      });
+
+      return li;
+    }
+
+    var fragment = document.createDocumentFragment();
+    SHOWCASE.forEach(function(item){ fragment.appendChild(buildCard(item)); });
+    grid.appendChild(fragment);
+
+    modalClose.addEventListener("click", closeModal);
+    modal.addEventListener("click", function(e){
+      if (e.target === modal || e.target.classList.contains("modal-backdrop")) closeModal();
+    });
+    modalPrev.addEventListener("click", function(){
+      gIndex = (gIndex - 1 + gallery.files.length) % gallery.files.length;
+      showPhoto();
+    });
+    modalNext.addEventListener("click", function(){
+      gIndex = (gIndex + 1) % gallery.files.length;
+      showPhoto();
+    });
+    document.addEventListener("keydown", function(e){
+      if (modal.hidden) return;
+      if (e.key === "Escape") closeModal();
+      if (e.key === "ArrowLeft" && gallery){
+        gIndex = (gIndex - 1 + gallery.files.length) % gallery.files.length;
+        showPhoto();
+      }
+      if (e.key === "ArrowRight" && gallery){
+        gIndex = (gIndex + 1) % gallery.files.length;
+        showPhoto();
+      }
+    });
+  })();
+  </script>
 
 </body>
 </html>
