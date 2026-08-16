@@ -117,10 +117,12 @@ img{ max-width: 100%; display: block; }
 }
 .collage{
   margin: 48px 0 0;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-flow: dense;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.collage-row{
+  display: flex;
   gap: 12px;
 }
 .collage-tile{
@@ -129,23 +131,16 @@ img{ max-width: 100%; display: block; }
   border-radius: 4px;
   background: var(--black);
   border: 1px solid var(--hairline);
+  flex-basis: 0;
   min-width: 0;
 }
-.collage-tile img{
-  width: 100%;
-  height: auto;
-  display: block;
-}
+.collage-tile img,
 .collage-tile video{
   width: 100%;
-  height: auto;
-  display: block;
+  height: 100%;
   object-fit: contain;
-  aspect-ratio: 16 / 9;
+  display: block;
 }
-.collage-tile--full{ grid-column: span 4; }
-.collage-tile--half{ grid-column: span 2; }
-.collage-tile--quarter{ grid-column: span 1; }
 .tile-caption{
   position: absolute;
   left: 12px;
@@ -588,16 +583,55 @@ img{ max-width: 100%; display: block; }
       }
     ];
 
-    function collageLayout(count){
-      if (count === 1) return ["full"];
-      if (count === 2) return ["half", "half"];
-      if (count === 3) return ["half", "quarter", "quarter"];
-      if (count === 4) return ["half", "half", "half", "half"];
-      return ["half", "quarter", "quarter", "half", "half"];
+    var GAP = 12;
+
+    function buildRows(items, width){
+      var target = width > 700 ? 300 : 220;
+      var rows = [];
+      var row = [];
+      var sum = 0;
+      items.forEach(function(item){
+        var est = target * (sum + item.aspect) + GAP * row.length;
+        if (row.length && est > width){
+          rows.push({ items: row, sum: sum });
+          row = [];
+          sum = 0;
+        }
+        row.push(item);
+        sum += item.aspect;
+      });
+      if (row.length) rows.push({ items: row, sum: sum });
+      return rows;
+    }
+
+    function layoutCollage(collageEl, items){
+      var width = collageEl.clientWidth;
+      if (width <= 0 || !items.length) return;
+      while (collageEl.firstChild) collageEl.removeChild(collageEl.firstChild);
+      buildRows(items, width).forEach(function(row){
+        var rowEl = document.createElement("div");
+        rowEl.className = "collage-row";
+        var avail = width - GAP * (row.items.length - 1);
+        var height = avail / row.sum;
+        row.items.forEach(function(item){
+          item.tileEl.style.flexGrow = item.aspect;
+          item.tileEl.style.height = height + "px";
+          rowEl.appendChild(item.tileEl);
+        });
+        collageEl.appendChild(rowEl);
+      });
+    }
+
+    function maybeLayout(collageInfo){
+      var ready = collageInfo.items.every(function(it){ return it.ready; });
+      if (ready){
+        requestAnimationFrame(function(){ layoutCollage(collageInfo.el, collageInfo.items); });
+      }
     }
 
     var host = document.getElementById("categories");
     var fragment = document.createDocumentFragment();
+    var collages = [];
 
     CATEGORIES.forEach(function(cat){
       var section = document.createElement("section");
@@ -629,17 +663,32 @@ img{ max-width: 100%; display: block; }
       var collage = document.createElement("div");
       collage.className = "collage";
 
-      var layout = collageLayout(cat.items.length);
+      var collageInfo = { el: collage, items: [] };
+      collages.push(collageInfo);
+
       cat.items.forEach(function(item, i){
         var tile = document.createElement("div");
-        tile.className = "collage-tile collage-tile--" + layout[i];
+        tile.className = "collage-tile";
+
+        item.tileEl = tile;
+        item.aspect = 16 / 9;
+        item.ready = false;
 
         if (item.type === "photo"){
           var img = document.createElement("img");
           img.src = enc(item.src);
           img.alt = cat.eyebrow + " — " + item.label;
-          img.loading = "lazy";
+          img.loading = "eager";
           tile.appendChild(img);
+          item.mediaEl = img;
+          function photoReady(){
+            item.ready = true;
+            if (img.naturalWidth && img.naturalHeight) item.aspect = img.naturalWidth / img.naturalHeight;
+            maybeLayout(collageInfo);
+          }
+          img.addEventListener("load", photoReady);
+          img.addEventListener("error", photoReady);
+          if (img.complete && img.naturalWidth) photoReady();
         } else {
           var v = document.createElement("video");
           v.src = enc(item.src);
@@ -648,8 +697,9 @@ img{ max-width: 100%; display: block; }
           v.playsInline = true;
           v.preload = "metadata";
           tile.appendChild(v);
+          item.mediaEl = v;
 
-          (function(video, tileEl){
+          (function(video, tileEl, item){
             function startPreview(){
               try{ video.currentTime = 0; video.play(); }catch(e){}
             }
@@ -657,9 +707,15 @@ img{ max-width: 100%; display: block; }
               try{ video.currentTime = 0; video.pause(); }catch(e){}
             }
             video.addEventListener("loadedmetadata", function(){
+              item.ready = true;
               if (video.videoWidth && video.videoHeight){
-                video.style.aspectRatio = video.videoWidth + " / " + video.videoHeight;
+                item.aspect = video.videoWidth / video.videoHeight;
               }
+              maybeLayout(collageInfo);
+            });
+            video.addEventListener("error", function(){
+              item.ready = true;
+              maybeLayout(collageInfo);
             });
             if ("IntersectionObserver" in window){
               var io = new IntersectionObserver(function(entries){
@@ -670,7 +726,7 @@ img{ max-width: 100%; display: block; }
               }, { threshold: 0.15 });
               io.observe(tileEl);
             }
-          })(v, tile);
+          })(v, tile, item);
         }
 
         if (item.label){
@@ -681,6 +737,7 @@ img{ max-width: 100%; display: block; }
         }
 
         collage.appendChild(tile);
+        collageInfo.items.push(item);
       });
 
       section.appendChild(head);
@@ -689,6 +746,16 @@ img{ max-width: 100%; display: block; }
     });
 
     host.appendChild(fragment);
+
+    collages.forEach(maybeLayout);
+
+    var resizeTimer = null;
+    window.addEventListener("resize", function(){
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function(){
+        collages.forEach(function(c){ layoutCollage(c.el, c.items); });
+      }, 150);
+    });
   })();
 
   (function(){
