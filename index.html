@@ -67,6 +67,18 @@ img{ max-width: 100%; display: block; }
   max-width: 36rem;
   margin: 24px 0 0;
 }
+@keyframes hero-rise{
+  from{ opacity: 0; transform: translateY(24px); }
+  to{ opacity: 1; transform: none; }
+}
+.hero-eyebrow,
+.hero-title,
+.hero-sub{
+  animation: hero-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.hero-eyebrow{ animation-delay: 0.05s; }
+.hero-title{ animation-delay: 0.2s; }
+.hero-sub{ animation-delay: 0.4s; }
 
 /* ---------- Sections ---------- */
 .section{
@@ -255,6 +267,9 @@ img{ max-width: 100%; display: block; }
 }
 @media (prefers-reduced-motion: reduce){
   .reveal{ opacity: 1; transform: none; transition: none; }
+  .hero-eyebrow,
+  .hero-title,
+  .hero-sub{ animation: none; }
 }
 
 /* ---------- Footer ---------- */
@@ -401,29 +416,12 @@ img{ max-width: 100%; display: block; }
 
     var CATEGORIES = [
       {
-        id: "wedding",
-        eyebrow: "Wedding",
-        format: "2.39:1 · Cinematic",
-        desc: "The full day shot live, then cut into a story worth keeping for years.",
+        id: "commercials",
+        eyebrow: "Cinematic Commercials",
+        format: "2.39:1 · Commercial",
+        desc: "Coffee, slow and considered.",
         items: [
-          { type: "photo", label: "01", src: BASE + "wedding/DSC07228.JPG" },
-          { type: "photo", label: "02", src: BASE + "wedding/DSC07235.JPG" },
-          { type: "photo", label: "03", src: BASE + "wedding/DSC07276.JPG" },
-          { type: "photo", label: "04", src: BASE + "wedding/DSC07324.JPG" },
-          { type: "photo", label: "05", src: BASE + "wedding/DSC07384.JPG" }
-        ]
-      },
-      {
-        id: "birthday",
-        eyebrow: "Birthday Party",
-        format: "16:9 · Event",
-        desc: "Bright candids and honest reactions, framed and cut for the feed.",
-        items: [
-          { type: "photo", label: "01", src: BASE + "birthday party/DSC02396.JPG" },
-          { type: "photo", label: "02", src: BASE + "birthday party/DSC02406.JPG" },
-          { type: "photo", label: "03", src: BASE + "birthday party/DSC02453.JPG" },
-          { type: "photo", label: "04", src: BASE + "birthday party/DSC02544.JPG" },
-          { type: "photo", label: "05", src: BASE + "birthday party/DSC02766.JPG" }
+          { type: "video", label: "", src: BASE + "Cinematic Commercials/Coffee.mp4" }
         ]
       },
       {
@@ -436,21 +434,12 @@ img{ max-width: 100%; display: block; }
         ]
       },
       {
-        id: "commercials",
-        eyebrow: "Cinematic Commercials",
-        format: "2.39:1 · Commercial",
-        desc: "Coffee, slow and considered.",
+        id: "music",
+        eyebrow: "Music Video",
+        format: "16:9 · Music",
+        desc: "Performance and atmosphere for the track.",
         items: [
-          { type: "video", label: "", src: BASE + "Cinematic Commercials/Coffee.mp4" }
-        ]
-      },
-      {
-        id: "dance",
-        eyebrow: "Dance Event",
-        format: "16:9 · Event",
-        desc: "Full-volume energy, cut to the beat.",
-        items: [
-          { type: "video", label: "", src: BASE + "Dance Event/01.mp4" }
+          { type: "video", label: "", src: BASE + "Music Video/01.mp4" }
         ]
       },
       {
@@ -465,15 +454,6 @@ img{ max-width: 100%; display: block; }
         ]
       },
       {
-        id: "music",
-        eyebrow: "Music Video",
-        format: "16:9 · Music",
-        desc: "Performance and atmosphere for the track.",
-        items: [
-          { type: "video", label: "", src: BASE + "Music Video/01.mp4" }
-        ]
-      },
-      {
         id: "school",
         eyebrow: "School Events",
         format: "16:9 · Event",
@@ -483,17 +463,8 @@ img{ max-width: 100%; display: block; }
         ]
       },
       {
-        id: "shortfilm",
-        eyebrow: "Short Film",
-        format: "2.39:1 · Narrative",
-        desc: "A quiet story told in frames.",
-        items: [
-          { type: "video", label: "", src: BASE + "Short film/01.mp4" }
-        ]
-      },
-      {
         id: "social",
-        eyebrow: "Social Media Ads",
+        eyebrow: "Social Media Campaign",
         format: "9:16 · Vertical",
         desc: "Vertical spots built for the feed, sized for the platforms they live on.",
         items: [
